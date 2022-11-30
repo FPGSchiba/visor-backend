@@ -21,7 +21,10 @@ export async function createTable(tableName: string, keySchema: KeySchema, attri
             StreamEnabled: false
         }
     } as CreateTableInput
-
-    const data = await ddb.createTable(params);
-    LOG.info(data);
+    try  {
+        const data = await ddb.createTable(params);
+        LOG.info(data);
+    } catch {
+        LOG.error(`Could not create Table: ${tableName}`);
+    }
 }
