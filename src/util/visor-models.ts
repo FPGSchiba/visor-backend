@@ -1,11 +1,11 @@
 import { CreateTableInput } from "aws-sdk/clients/dynamodb";
 
-export function getReportsModelWithName(tableName: string) {
+export function getReportsTableModelWithName(tableName: string) {
     return {
         AttributeDefinitions: [
             {
                 AttributeName: "",
-                AttributeType: ""
+                AttributeType: "" //https://dynobase.dev/dynamodb-data-types/
             }
         ],
         KeySchema: [
