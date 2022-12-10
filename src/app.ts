@@ -3,8 +3,11 @@ import expressWinston from 'express-winston';
 import { loggerOptions } from './util';
 const app = express();
 import pj from '../package.json';
+import { runMigration } from './util/migration-manager';
 
 app.use(expressWinston.logger(loggerOptions));
+
+runMigration();
 
 
 /** Parse the body of the request */
