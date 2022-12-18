@@ -25,12 +25,11 @@
 | Implement Authentication | Implement the defined authentication method and test it with the Overlay | Open | FPG Schiba |
 | Path2 |  | Open | FPG Schiba |
 
-## API
 
+## API
 All details to the requests and responses for those requests.
 
 ### Default
-
 Route: `/`
 
 Method: `GET`
