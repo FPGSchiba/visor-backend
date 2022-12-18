@@ -14,11 +14,10 @@
 
 > Block quote
 
-## API
-
+## API
 All details to the requests and responses for those requests.
 
-### Default
+### Default
 
 Route: `/`
 
@@ -29,7 +28,7 @@ Return: HTML with project name and Version.
 Codes:
 + 200: OK - Everything is fine
 
-## Database
+## Database
 
 TBD: Define Database structures
 
