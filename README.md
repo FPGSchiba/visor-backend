@@ -32,8 +32,11 @@ All details to the requests and responses for those requests.
 ### Default
 
 Route: `/`
+
 Method: `GET`
+
 Return: HTML with project name and Version.
+
 Codes:
 + 200: OK - Everything is fine
 
