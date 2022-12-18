@@ -27,9 +27,11 @@
 
 
 ## API
+
 All details to the requests and responses for those requests.
 
 ### Default
+
 Route: `/`
 
 Method: `GET`
