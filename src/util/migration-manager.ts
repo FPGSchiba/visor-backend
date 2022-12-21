@@ -11,24 +11,22 @@ export function runMigration() {
     const migrationFiles = fs.readdirSync(MIGRATION_DIRECTORY.replace('.', 'src/util'));
     scanTable(MIGRATION_TABLE_NAME, async (data) => {
         const doneMigrations = data.Items;
-        const migrated = await Promise.all(migrationFiles.map(async (file) => {
+        migrationFiles.map(async (file) => {
             if (!didRunMigration(file, doneMigrations)) {
                 const module = await import(`${MIGRATION_DIRECTORY}${file}`);
-                module.runMigration()
-                return file;
+                module.runMigration((success: boolean) => {
+                    if (success) {
+                        LOG.info(`Successful migration for: [${file}]`);
+                        const item = {
+                            id: {S: uuidv4()} ,
+                            fileName: {S: file},
+                            date: {S: Date()}
+                        }
+                        putItem(MIGRATION_TABLE_NAME, item);
+                    }
+                });
             }
-        }));
-        LOG.info(`Successful migration for: [${migrated}]`);
-        migrated.forEach((value) => {
-            if (value) {
-                const item = {
-                    id: {S: uuidv4()} ,
-                    fileName: {S: value},
-                    date: {S: Date()}
-                }
-                putItem(MIGRATION_TABLE_NAME, item);
-            }
-        })
+        });
     })
 }
 
@@ -50,7 +48,7 @@ function createMigrationTable() {
     getAllTables((tables) => {
         if (!(tables && tables.includes(MIGRATION_TABLE_NAME))) {
             const table = getMigrationsTableModelWithName(MIGRATION_TABLE_NAME);
-            createTable(table.TableName, table.KeySchema, table.AttributeDefinitions);
+            createTable(table);
         }
     })
 }

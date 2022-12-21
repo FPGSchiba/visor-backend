@@ -1,36 +1,49 @@
 import AWS from 'aws-sdk';
-import { AttributeDefinitions, CreateTableInput, GetItemInput, KeySchema, Key, GetItemOutput, ScanInput, ScanOutput, PutItemInput, PutItemOutput } from 'aws-sdk/clients/dynamodb';
+import { CreateTableInput, GetItemInput, Key, GetItemOutput, ScanInput, ScanOutput, PutItemInput } from 'aws-sdk/clients/dynamodb';
 import * as dotenv from 'dotenv';
 import { LOG } from './logger';
 dotenv.config();
 
 AWS.config.update({region: process.env.AWS_REGION || 'eu-central-1'});
 
-const ddb = new AWS.DynamoDB({apiVersion: '2012-08-10', endpoint: process.env.AWS_DDB_ENDPOINT || ''});
+const ddb = new AWS.DynamoDB(
+    {
+        apiVersion: '2012-08-10',
+        endpoint: process.env.AWS_DDB_ENDPOINT || '',
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID || '',
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || '',
+    }
+);
 
-export async function createTable(tableName: string, keySchema: KeySchema, attributeDefinitions: AttributeDefinitions) {
+export async function createTable(table: CreateTableInput, callbacK?: (success: boolean) => void) {
     const params = {
-        AttributeDefinitions: attributeDefinitions,
-        KeySchema: keySchema,
-        TableName: tableName,
+        ...table,
         ProvisionedThroughput: {
             ReadCapacityUnits: 1,
-            WriteCapacityUnits: 1
+            WriteCapacityUnits: 1,
         },
         StreamSpecification: {
-            StreamEnabled: false
+            StreamEnabled: false,
         }
     } as CreateTableInput
     try  {
         await ddb.createTable(params, (err, _) => {
             if (!err) {
-                LOG.info(`Created Table: ${params.TableName}`);
+                if (typeof callbacK !== "undefined") { 
+                    callbacK(true);
+                }
             } else {
                 LOG.error(err.message);
+                if (typeof callbacK !== "undefined") { 
+                    callbacK(false);
+                }
             }
         });
     } catch {
-        LOG.error(`Could not create Table: ${tableName}`);
+        LOG.error(`Could not create Table: ${table.TableName}`);
+        if (typeof callbacK !== "undefined") { 
+            callbacK(false);
+        }
     }
 }
 
