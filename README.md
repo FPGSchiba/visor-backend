@@ -29,18 +29,26 @@ And in Cases where you request Information, there is a 3rd Property:
 ### Default
 
 Route: `/`
+
 Method: `GET`
+
 Return: HTML with project name and Version.
+
 Codes:
 + 200: OK - Everything is fine
 
 ### Create Org
 
 Route: `/create-org`
+
 Method: `POST`
+
 Body: `{ "name": "{org-name}", "owner": "{org-owner-name}", "token": "{org-creation-token}" }`
+
 Headers: `X-VISOR-API-Key: {admin-token}` (The admin token is only accessible to VISOR Administrators)
+
 Return: VISOR API Response
+
 Codes:
  + 400: Org already exists
  + 401: Not Authorized
@@ -49,9 +57,13 @@ Codes:
 ### List Orgs
 
 Route: `/orgs`
+
 Method: `GET`
+
 Headers: `X-VISOR-API-Key: {admin-token}` (The admin token is only accessible to VISOR Administrators)
+
 Return: VISOR API Response with a list of org-names & org-ids
+
 Codes:
  + 401: Not Authorized
  + 200: OK - Information returned
