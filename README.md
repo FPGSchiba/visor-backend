@@ -43,7 +43,7 @@ Route: `/create-org`
 
 Method: `POST`
 
-Body: `{ "name": "{org-name}", "owner": "{org-owner-name}", "token": "{org-creation-token}" }`
+Body: `{ "name": "{org-name}", "owner": "{org-owner-name}" }`
 
 Headers: `X-VISOR-API-Key: {admin-token}` (The admin token is only accessible to VISOR Administrators)
 
@@ -53,6 +53,23 @@ Codes:
  + 400: Org already exists
  + 401: Not Authorized
  + 200: OK - Org was created
+
+### Activate Org
+
+Route: `/activate-org`
+
+Method: `POST`
+
+body: `{ "token": "{org-creation-token}" }`
+
+Headers: None
+
+Return: VISOR API Response
+
+Codes:
+ + 400: Org already active
+ + 401: No such creation-token
+ + 200: OK - Org activated
 
 ### List Orgs
 

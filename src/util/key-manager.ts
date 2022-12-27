@@ -1,58 +1,68 @@
 import * as dotenv from 'dotenv';
 import { decodeString, decryptUint8Array, encodeString, encryptUint8Array } from 'encrypt-uint8array/dist/source';
+import * as crypto from 'crypto';
 import { LOG } from './logger';
 dotenv.config();
 
+function getSHA1Hash(value: crypto.BinaryLike) {
+    return crypto.createHash('sha1').update(value).digest('hex');
+}
+
 class UserKeyManager {
-    readonly secret = encodeString(process.env.USER_ENCRYPTION_SECRET || 'th1s1ss3cur3');
+    // Generate here: https://onlinebase64tools.com/generate-random-base64 (Settings: min & max: 32, Avoid Padding: true, Chunk Lenght: 32)
+    static readonly secret = process.env.USER_ENCRYPTION_SECRET || 'vOVH6sdmpNWjRRIqCc7rdxs01lwHzfr3';
+    static readonly algorithm = 'aes-256-ctr'
+    static readonly iv = Buffer.from([0x2f, 0x76, 0xa0, 0xe6, 0x56, 0x10, 0x70, 0x4b, 0x98, 0x2b, 0xdc, 0xab, 0x04, 0x1d, 0x84, 0xcf]);
 
-    public async createUserKey(username: string): Promise<string> {
-        return Buffer.from(await encryptUint8Array(encodeString(username), this.secret)).toString('hex');
+    private static encrypt(data: string): string {
+        const cipher = crypto.createCipheriv(this.algorithm, this.secret, this.iv);
+        return Buffer.concat([cipher.update(data), cipher.final()]).toString('hex');
     }
 
-    public async validateUserKey(userKey: string, username: string): Promise<boolean> {
-        const usernameFromKey = await decodeString(await decryptUint8Array(encodeString(userKey), this.secret));
-        return username == usernameFromKey;
+    static getUserKey(username: string): string {
+        return this.encrypt(getSHA1Hash(username));
     }
 
-    public getUserFromKey(userKey: string): string {
-        return '';
-    }
-
-    public getKeyFromUser(username: string): string {
-        return '';
+    static validateUserKey(userKey: string, username: string): boolean {
+        const userKeyFromName = this.getUserKey(username);
+        return userKeyFromName == userKey;
     }
 }
 
 class OrgKeyManager {
-    readonly secret = encodeString(process.env.ORG_ENCRYPTION_SECRET || 'th1s1ss3cur3');
+    // Generate here: https://onlinebase64tools.com/generate-random-base64 (Settings: min & max: 32, Avoid Padding: true, Chunk Lenght: 32)
+    static readonly secret = process.env.ORG_ENCRYPTION_SECRET || 'vOVH6sdmpNWjRRIqCc7rdxs01lwHzfr3';
+    static readonly algorithm = 'aes-256-ctr'
+    static readonly iv = Buffer.from([0x2f, 0x76, 0xa0, 0xe6, 0x56, 0x10, 0x70, 0x4b, 0x98, 0x2b, 0xdc, 0xab, 0x04, 0x1d, 0x84, 0xcf]);
 
-    createOrgKey(orgName: string) {
-
+    private static encrypt(data: string): string {
+        const cipher = crypto.createCipheriv(this.algorithm, this.secret, this.iv);
+        return Buffer.concat([cipher.update(data), cipher.final()]).toString('hex');
     }
 
-    validateOrgKey(orgKey: string, orgName: string): boolean {
-        return true;
+    static getOrgKey(orgName: string) {
+        return this.encrypt(getSHA1Hash(orgName));
     }
 
-    getOrgFromKey(orgKey: string): string {
-        return '';
-    }
-
-    getKeyFromOrg(orgName: string): string {
-        return '';
+    static validateOrgKey(orgKey: string, orgName: string): boolean {
+        const userKeyFromName = this.getOrgKey(orgName);
+        return userKeyFromName == orgKey;
     }
 }
 
 class OrgCreationKeyManager {
-    readonly secret = encodeString(process.env.CREATION_ENCRYPTION_SECRET || 'th1s1ss3cur3');
+    // Generate here: https://onlinebase64tools.com/generate-random-base64 (Settings: min & max: 32, Avoid Padding: true, Chunk Lenght: 32)
+    static readonly secret = process.env.CREATION_ENCRYPTION_SECRET || 'vOVH6sdmpNWjRRIqCc7rdxs01lwHzfr3';
+    static readonly algorithm = 'aes-256-ctr'
+    static readonly iv = Buffer.from([0x2f, 0x76, 0xa0, 0xe6, 0x56, 0x10, 0x70, 0x4b, 0x98, 0x2b, 0xdc, 0xab, 0x04, 0x1d, 0x84, 0xcf]);
 
-    createCreationKey(orgName: string, requester: string) {
-
+    private static encrypt(data: string): string {
+        const cipher = crypto.createCipheriv(this.algorithm, this.secret, this.iv);
+        return Buffer.concat([cipher.update(data), cipher.final()]).toString('hex');
     }
 
-    activateCreationKey(orgKey: string): boolean {
-        return true;
+    static getCreationKey(orgName: string, requester: string) {
+        return this.encrypt(getSHA1Hash(`${orgName}-${requester}`));
     }
 }
 
