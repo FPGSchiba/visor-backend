@@ -17,6 +17,15 @@
 ## API
 All details to the requests and responses for those requests.
 
+### API Response
+
+Is a message that always has 2 Properties:
+ 1. A Code that depends on the Path called on the API
+ 2. A message that depends on the Path called on the API
+
+And in Cases where you request Information, there is a 3rd Property:
+ 3. A body this property holds data, that was requested
+
 ### Default
 
 Route: `/`
@@ -24,6 +33,60 @@ Method: `GET`
 Return: HTML with project name and Version.
 Codes:
 + 200: OK - Everything is fine
+
+### Create Org
+
+Route: `/create-org`
+Method: `POST`
+Body: `{ "name": "{org-name}", "owner": "{org-owner-name}", "token": "{org-creation-token}" }`
+Headers: `X-VISOR-API-Key: {admin-token}` (The admin token is only accessible to VISOR Administrators)
+Return: VISOR API Response
+Codes:
+ + 400: Org already exists
+ + 401: Not Authorized
+ + 200: OK - Org was created
+
+### List Orgs
+
+Route: `/orgs`
+Method: `GET`
+Headers: `X-VISOR-API-Key: {admin-token}` (The admin token is only accessible to VISOR Administrators)
+Return: VISOR API Response with a list of org-names & org-ids
+Codes:
+ + 401: Not Authorized
+ + 200: OK - Information returned
+
+### Get VISORs
+
+TBD
+
+### Created VISOR
+
+TBD
+
+### Update VISOR
+
+TBD
+
+### Create User
+
+TBD
+
+### List Users
+
+TBD
+
+### Get specific user
+
+TBD
+
+### Edit user
+
+TBD
+
+### Reports & Changes
+
+TBD
 
 ## Database
 
@@ -44,9 +107,7 @@ Here is how these Keys can access the different reports and how user Activity is
 | Task | Description | State | Owner |
 |------|-------------|-------|-------|
 | Define structures | Define all Data structures and migration details | Done | FPG Schiba |
-| Plan API's | Need to plan all API paths and request and response details | In Progress | FPG Schiba |
-| Plan Authentication | Describe and define the authentication details for the backend | In Progress | FPG Schiba |
+| Plan API's | Need to plan all API paths and request and response details | Done | FPG Schiba |
+| Plan Authentication | Describe and define the authentication details for the backend | Done | FPG Schiba |
 | Implement Authentication | Implement the defined authentication method and test it with the Overlay | Open | FPG Schiba |
-| Path2 |  | Open | FPG Schiba |
-
-
+| Changes | Define all paths to changes & reports in order to get a overview of what happens in VISOR | Open | FPG Schiba |
