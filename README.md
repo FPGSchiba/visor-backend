@@ -39,7 +39,7 @@ Codes:
 
 ### Create Org
 
-Route: `/create-org`
+Route: `/api/create-org`
 
 Method: `POST`
 
@@ -73,7 +73,7 @@ Codes:
 
 ### List Orgs
 
-Route: `/orgs`
+Route: `/api/orgs`
 
 Method: `GET`
 

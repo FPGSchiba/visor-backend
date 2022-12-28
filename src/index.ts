@@ -1,7 +1,6 @@
 import app from "./app";
 import { LOG } from "./util";
 import * as dotenv from 'dotenv';
-import { UserKeyManager } from "./util/key-manager";
 dotenv.config();
 
 const port = process.env.PORT || 3001;

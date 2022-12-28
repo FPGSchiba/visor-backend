@@ -4,6 +4,9 @@ import { loggerOptions } from './util';
 const app = express();
 import pj from '../package.json';
 import { runMigration } from './util/migration-manager';
+import managementRouter from './router/management.router';
+import { adminAuthentication } from './middleware/admin-auth';
+import managementController from './controller/management.controller';
 
 app.use(expressWinston.logger(loggerOptions));
 
@@ -26,6 +29,10 @@ app.use((req, res, next) => {
 
     next();
 });
+
+app.use('/api', adminAuthentication, managementRouter);
+
+app.post('/activate-org', managementController.activateOrg);
 
 app.get('/', (req, res) => {
     res.send(`<h1>FISOR Backend v${pj.version}</h1>
