@@ -1,7 +1,7 @@
 import AWS from 'aws-sdk';
 import { CreateTableInput, GetItemInput, Key, GetItemOutput, ScanInput, ScanOutput, PutItemInput } from 'aws-sdk/clients/dynamodb';
 import * as dotenv from 'dotenv';
-import { LOG } from './logger';
+import { LOG } from '../logger';
 dotenv.config();
 
 AWS.config.update({region: process.env.AWS_REGION || 'eu-central-1'});
@@ -85,14 +85,16 @@ export function scanTable(tableName: string, callbacK: (data: ScanOutput) => voi
     })
 }
 
-export function putItem(tableName: string, item: any) {
+export function putItem(tableName: string, item: any, callback: (err?: AWS.AWSError) => void) {
     const params: PutItemInput = {
         TableName: tableName,
         Item: item
     }
     ddb.putItem(params, (err, _) => {
         if (err) {
-            LOG.error(err.message);
+            callback(err);
+        } else {
+            callback();
         }
     })
 }

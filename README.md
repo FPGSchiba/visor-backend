@@ -20,11 +20,11 @@ All details to the requests and responses for those requests.
 ### API Response
 
 Is a message that always has 2 Properties:
- 1. A Code that depends on the Path called on the API
- 2. A message that depends on the Path called on the API
+ 1. `code` that depends on the Path called on the API
+ 2. `message` that depends on the Path called on the API
 
 And in Cases where you request Information, there is a 3rd Property:
- 3. A body this property holds data, that was requested
+ 3. `data` this property holds data, that was requested
 
 ### Default
 
@@ -47,7 +47,7 @@ Body: `{ "name": "{org-name}", "owner": "{org-owner-name}" }`
 
 Headers: `X-VISOR-API-Key: {admin-token}` (The admin token is only accessible to VISOR Administrators)
 
-Return: VISOR API Response
+Return: VISOR API Response, with body: `{ "creationToken": "{new-creation-token}"}`
 
 Codes:
  + 400: Org already exists

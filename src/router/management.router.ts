@@ -7,6 +7,6 @@ const router = Router();
 router.get('/orgs', managementController.getOrgs);
 
 // TODO: POST create-org
-router.post('/create-org')
+router.post('/create-org', managementController.createOrg);
 
 export default router;

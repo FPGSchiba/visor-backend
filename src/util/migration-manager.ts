@@ -1,5 +1,5 @@
 import { MIGRATION_DIRECTORY, MIGRATION_TABLE_NAME } from "./config";
-import { createTable, getAllTables, putItem, scanTable } from "./database";
+import { createTable, getAllTables, putItem, scanTable } from "./database/database";
 import { getMigrationsTableModelWithName } from "./models/migration-model";
 import {v4 as uuidv4} from 'uuid';
 import * as fs from "fs";
@@ -22,7 +22,11 @@ export function runMigration() {
                             fileName: {S: file},
                             date: {S: Date()}
                         }
-                        putItem(MIGRATION_TABLE_NAME, item);
+                        putItem(MIGRATION_TABLE_NAME, item, (err) => {
+                            if (err) {
+                                LOG.error(err.message);
+                            }
+                        });
                     }
                 });
             }
@@ -32,14 +36,12 @@ export function runMigration() {
 
 function didRunMigration(file: string, doneMigrations: ItemList | undefined): boolean {
     if (doneMigrations) {
-        const items = doneMigrations.map((value) => {
-            if (value.fileName.S == file) {
-                return true;
-            }
+        const items = doneMigrations.filter((value) => value.fileName.S == file);
+        if (items.length == 1) {
+            return true;
+        } else {
             return false;
-        })
-
-        return items.includes(true);
+        }
     }
     return false;
 }

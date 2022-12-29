@@ -1,5 +1,5 @@
 import { getReportsTableModelWithName } from '../models/visor-models';
-import { createTable, getAllTables } from '../database';
+import { createTable, getAllTables } from '../database/database';
 import { REPORT_TABLE_NAME } from '../config';
 
 export function runMigration(callback: (success: boolean) => void) {
