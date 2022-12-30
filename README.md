@@ -47,7 +47,7 @@ Body: `{ "name": "{org-name}", "owner": "{org-owner-name}" }`
 
 Headers: `X-VISOR-API-Key: {admin-token}` (The admin token is only accessible to VISOR Administrators)
 
-Return: VISOR API Response, with body: `{ "creationToken": "{new-creation-token}"}`
+Return: VISOR API Response, with body: `{ "activationToken": "{new-activation-token}"}`
 
 Codes:
  + 400: Org already exists or body is missing
@@ -61,7 +61,7 @@ Route: `/activate-org`
 
 Method: `POST`
 
-body: `{ "token": "{org-creation-token}" }`
+body: `{ "token": "{org-activation-token}" }`
 
 Headers: None
 
@@ -69,7 +69,7 @@ Return: VISOR API Response
 
 Codes:
  + 400: Org already active or body missing
- + 401: No such creation-token
+ + 401: No such activation-token
  + 200: OK - Org activated
 
 ### List Orgs
@@ -93,8 +93,8 @@ Route: `/api/delete-org`
 
 Method: `POST`
 
-body: `{ "name": "{org-name}", "only-inactive": true }`
- * The `only-inactive` setting is used to say if the Org Database should be deleted or not. If this is set to `true` only orgs, that are inactive can be deleted. If this property is not set, it will default to `true`.
+body: `{ "name": "{org-name}", "onlyInactive": true }`
+ * The `onlyInactive` setting is used to say if the Org Database should be deleted or not. If this is set to `true` only orgs, that are inactive can be deleted. If this property is not set, it will default to `true`.
 
 Headers: `X-VISOR-API-Key: {admin-token}` (The admin token is only accessible to VISOR Administrators)
 
@@ -105,15 +105,15 @@ Codes:
  + 401: Not Authorized
  + 200: OK - Org deleted
 
-### Get creation Token
+### Get activation Token
 
-Route: `/api/creation-token?name={org-name}`
+Route: `/api/activation-token?name={org-name}`
 
 Method: `GET`
 
 Headers: `X-VISOR-API-Key: {admin-token}` (The admin token is only accessible to VISOR Administrators)
 
-Return: VISOR API Response, with a body holding the creation token
+Return: VISOR API Response, with a body holding the activation token
 
 Codes:
  + 400: Body missing
@@ -173,5 +173,10 @@ Here is how these Keys can access the different reports and how user Activity is
 | Define structures | Define all Data structures and migration details | Done | FPG Schiba |
 | Plan API's | Need to plan all API paths and request and response details | Done | FPG Schiba |
 | Plan Authentication | Describe and define the authentication details for the backend | Done | FPG Schiba |
-| Implement Authentication | Implement the defined authentication method and test it with the Overlay | Open | FPG Schiba |
+| Implement Admin Authentication | Implement the defined authentication method as an Administrator of VISOR | Done | FPG Schiba |
+| Implement Management | Define and implement all paths needed to manage VISOR as a whole. | In Progress | FPG Schiba |
+| Implement Org Activation | Define and Implement how Orgs will be created with their activation token. | Open | FPG Schiba |
+| Implement Org Authentication | Define and Implement a authentication for users with orgs | Open | FPG Schiba |
+| Plan Reports | Define and plan search quarries for VISOR Reports | Open | FPG Schiba |
+| Implement Reports | Implement the planned quarries and Paths and test it with the Overlay | Open | FPG Schiba |
 | Changes | Define all paths to changes & reports in order to get a overview of what happens in VISOR | Open | FPG Schiba |

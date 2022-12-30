@@ -4,22 +4,14 @@ export function getOrgCreationModelWithName(tableName: string) {
     return {
         AttributeDefinitions: [
             {
-                AttributeName: "activationKey",
-                AttributeType: "S"
-            },
-            {
-                AttributeName: "activated",
-                AttributeType: "B" //https://dynobase.dev/dynamodb-data-types/
+                AttributeName: "orgName",
+                AttributeType: "S" //https://dynobase.dev/dynamodb-data-types/
             }
         ],
         KeySchema: [
             {
-                AttributeName: "activationKey",
+                AttributeName: "orgName",
                 KeyType: "HASH"
-            },
-            {
-                AttributeName: "activated",
-                KeyType: "RANGE"
             }
         ],
         TableName: tableName

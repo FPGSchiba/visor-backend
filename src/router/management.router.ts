@@ -3,10 +3,10 @@ import managementController from "../controller/management.controller";
 
 const router = Router();
 
-// TODO: GET orgs
 router.get('/orgs', managementController.getOrgs);
+router.get('/activation-token', managementController.getOrgActivationToken);
 
-// TODO: POST create-org
 router.post('/create-org', managementController.createOrg);
+router.post('/delete-org', managementController.deleteOrg);
 
 export default router;

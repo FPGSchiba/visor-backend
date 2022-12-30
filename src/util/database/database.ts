@@ -1,5 +1,5 @@
 import AWS from 'aws-sdk';
-import { CreateTableInput, GetItemInput, Key, GetItemOutput, ScanInput, ScanOutput, PutItemInput } from 'aws-sdk/clients/dynamodb';
+import { CreateTableInput, GetItemInput, Key, GetItemOutput, ScanInput, ScanOutput, PutItemInput, DeleteItemInput } from 'aws-sdk/clients/dynamodb';
 import * as dotenv from 'dotenv';
 import { LOG } from '../logger';
 dotenv.config();
@@ -57,16 +57,17 @@ export function getAllTables(callback: (data: AWS.DynamoDB.TableNameList | undef
     });
 }
 
-export function getItemFromTable(tableName: string, key: Key, callback: (data: GetItemOutput) => void) {
+export function getItemFromTable(tableName: string, key: Key, callback: (success: boolean, data?: GetItemOutput) => void) {
     const params: GetItemInput = {
         TableName: tableName,
         Key: key
     }
     ddb.getItem(params, (err, data) => {
         if (!err) {
-            callback(data);
+            callback(true, data);
         } else {
             LOG.error(err.message);
+            callback(false);
         }
     })
 }
@@ -95,6 +96,22 @@ export function putItem(tableName: string, item: any, callback: (err?: AWS.AWSEr
             callback(err);
         } else {
             callback();
+        }
+    })
+}
+
+
+export function deleteItem(tableName: string, key: Key, callback: (success: boolean) => void) {
+    const params: DeleteItemInput = {
+        TableName: tableName,
+        Key: key
+    }
+    ddb.deleteItem(params, (err, data) => {
+        if (err) {
+            LOG.error(err.message);
+            callback(false);
+        } else {
+            callback(true);
         }
     })
 }
