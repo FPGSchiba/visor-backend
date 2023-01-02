@@ -4,9 +4,9 @@ import { createUser } from "./database/org-users.database";
 import { LOG } from "./logger";
 import { getChangesTableModelWithName, getReportsTableModelWithName, getUsersTableModelWithName } from "./models/visor-models";
 
-export function activateOrg(activationToken: string, callback: (success: boolean, message: string, token?: {orgToken: string, userToken: string}) => void) {
+export async function activateOrg(activationToken: string, callback: (success: boolean, message: string, token?: {orgToken: string, userToken: string}) => void) {
     // Get Org Info
-    getOrgInfo(activationToken, async (success, data) => {
+    await getOrgInfo(activationToken, async (success, data) => {
         if (success && data) {
             const { orgName, requester } = data;
             // Create Tables

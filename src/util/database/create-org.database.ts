@@ -128,7 +128,7 @@ export function activateOrgRecord(orgName: string, callback: (success: boolean, 
         if (updateSuccess) {
             getItemFromTable(ORG_CREATION_TABLE, key, (getSuccess, data) => {
                 if (getSuccess && data?.Item) {
-                    callback(true, data.Item.orgToken.S);
+                    callback(true, data.Item.orgKey.S);
                 } else {
                     callback(false);
                 }
