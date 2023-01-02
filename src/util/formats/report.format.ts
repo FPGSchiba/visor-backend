@@ -90,9 +90,9 @@ export interface IVISORNavigation {
     om4: number;
     om5: number;
     om6: number;
-    straightLineOms: IVISORNavigationStraightOM[];
-    refuelingGroundPoi: IVISORNavigationGround;
-    spaceStation: IVISORNavigationStation;
+    straightLineOms?: IVISORNavigationStraightOM[];
+    refuelingGroundPoi?: IVISORNavigationGround;
+    spaceStation?: IVISORNavigationStation;
 }
 
 export interface IVISORLocationDetailsZones {
@@ -138,8 +138,8 @@ export interface IVISORReport {
     reportMeta: IVISORReportMeta;
     locationDetails: IVISORLocationDetails;
     navigation: IVISORNavigation;
-    fuelConsumptions: IVISORFuelConsumption[];
-    virs: IVISORVirs;
+    fuelConsumptions?: IVISORFuelConsumption[];
+    virs?: IVISORVirs;
     screenShots: IVISORScreenshot[];
-    keywords: string[];
+    keywords?: string[];
 }

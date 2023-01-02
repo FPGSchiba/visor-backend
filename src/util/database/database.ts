@@ -1,6 +1,8 @@
 import AWS from 'aws-sdk';
-import { CreateTableInput, GetItemInput, Key, GetItemOutput, ScanInput, ScanOutput, PutItemInput, DeleteItemInput } from 'aws-sdk/clients/dynamodb';
+import { Query } from 'aws-sdk/clients/cloudsearchdomain';
+import { CreateTableInput, GetItemInput, Key, GetItemOutput, ScanInput, ScanOutput, PutItemInput, DeleteItemInput, QueryOutput, QueryInput, UpdateItemInput, AttributeUpdates, DeleteTableInput } from 'aws-sdk/clients/dynamodb';
 import * as dotenv from 'dotenv';
+import { Logform } from 'winston';
 import { LOG } from '../logger';
 dotenv.config();
 
@@ -45,6 +47,21 @@ export async function createTable(table: CreateTableInput, callbacK?: (success: 
             callbacK(false);
         }
     }
+}
+
+export function deleteTable(tableName: string, callback: (success: boolean) => void) {
+    const params = {
+        TableName: tableName
+    } as DeleteTableInput
+
+    ddb.deleteTable(params, (err, _) => {
+        if (err) {
+            LOG.error(err.message);
+            callback(false);
+        } else {
+            callback(true);
+        }
+    })
 }
 
 export function getAllTables(callback: (data: AWS.DynamoDB.TableNameList | undefined) => void) {
@@ -107,6 +124,44 @@ export function deleteItem(tableName: string, key: Key, callback: (success: bool
         Key: key
     }
     ddb.deleteItem(params, (err, data) => {
+        if (err) {
+            LOG.error(err.message);
+            callback(false);
+        } else {
+            callback(true);
+        }
+    })
+}
+
+export function queryTable(query: QueryInput, callback: (success: boolean, data?: QueryOutput) => void) {
+    ddb.query(query, (err, data) => {
+        if (err) {
+            LOG.error(err.message);
+            callback(false)
+        } else {
+            callback(true, data);
+        }
+    })
+}
+
+export function filterTable(params: ScanInput, callback: (success: boolean, data?: ScanOutput) => void) {
+    ddb.scan(params, (err, data) => {
+        if (err) {
+            LOG.error(err.message);
+            callback(false);
+        } else {
+            callback(true, data);
+        }
+    })
+}
+
+export function updateItem(tableName: string, key: Key, updates: AttributeUpdates, callback: (success: boolean) => void) {
+    const params = {
+        TableName: tableName,
+        AttributeUpdates: updates,
+        Key: key,
+    } as UpdateItemInput
+    ddb.updateItem(params, (err, _) => {
         if (err) {
             LOG.error(err.message);
             callback(false);

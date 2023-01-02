@@ -32,7 +32,7 @@ app.use((req, res, next) => {
 
 app.use('/api', adminAuthentication, managementRouter);
 
-app.post('/activate-org', managementController.activateOrg);
+app.post('/activate-org', managementController.activateOrgReq);
 
 app.get('/', (req, res) => {
     res.send(`<h1>FISOR Backend v${pj.version}</h1>

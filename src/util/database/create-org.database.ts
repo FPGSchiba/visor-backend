@@ -1,7 +1,9 @@
+import { DynamoDB } from 'aws-sdk';
+import { AttributeUpdates, QueryInput } from 'aws-sdk/clients/dynamodb';
 import { ORG_CREATION_TABLE } from '../config';
-import { OrgCreationKeyManager } from '../key-manager';
+import { OrgCreationKeyManager, OrgKeyManager } from '../key-manager';
 import { LOG } from '../logger';
-import { deleteItem, getItemFromTable, putItem, scanTable } from './database';
+import { deleteItem, filterTable, getItemFromTable, putItem, queryTable, scanTable, updateItem } from './database';
 
 export interface IOrgInfo {
     orgName: string,
@@ -12,10 +14,12 @@ export interface IOrgInfo {
 
 export function registerNewOrgCreation(orgName: string, requester: string, callback: (success: boolean, creationToken?: string) => void) {
     const creationKey = OrgCreationKeyManager.getCreationKey(orgName, requester);
+    const orgKey = OrgKeyManager.getOrgKey(orgName);
     const item = {
-        activationKey: {S: creationKey} ,
+        activationKey: {S: creationKey},
         activated: {BOOL: false},
         orgName: {S: orgName},
+        orgKey: {S: orgKey},
         requester: {S: requester},
         creationDate: {S: Date()}
     }
@@ -72,4 +76,65 @@ export function deleteNotActiveOrg(orgName: string, callback: (success: boolean)
     deleteItem(ORG_CREATION_TABLE, key, (success) => {
         callback(success);
     })
+}
+
+export function getOrgInfo(orgToken: string, callback: (success: boolean, data?: {orgName: string, requester: string}) => void) {
+    const query = {
+        "TableName": "private-org-creations",
+        "ConsistentRead": false,
+        "FilterExpression": "#d8850 = :d8850 and #d8851 = :d8851",
+        "ExpressionAttributeValues": {
+            ":d8850": {
+                "S": orgToken
+            },
+            ":d8851": {
+                "BOOL": false
+            }
+        },
+        "ExpressionAttributeNames": {
+            "#d8850": "activationKey",
+            "#d8851": "activated"
+        }
+    }
+    filterTable(query, (success, data) => {
+        if(success) {
+            if (data?.Items?.length == 1) {
+                const result = data?.Items[0];
+                const returnData = {
+                    orgName: result.orgName.S ||'',
+                    requester: result.requester.S||'',
+                }
+                callback(true, returnData);
+            } else {
+                callback(false);
+            }
+        } else {
+            callback(false);
+        }
+    })
+}
+
+export function activateOrgRecord(orgName: string, callback: (success: boolean, orgToken?: string) => void) {
+    const key = {
+        orgName: {S: orgName}
+    }
+    const updates = {
+        activated: {
+            Value: { BOOL: true}
+        }
+    } as AttributeUpdates
+
+    updateItem(ORG_CREATION_TABLE, key, updates, (updateSuccess) => {
+        if (updateSuccess) {
+            getItemFromTable(ORG_CREATION_TABLE, key, (getSuccess, data) => {
+                if (getSuccess && data?.Item) {
+                    callback(true, data.Item.orgToken.S);
+                } else {
+                    callback(false);
+                }
+            })
+        } else {
+            callback(false);
+        }
+    });
 }

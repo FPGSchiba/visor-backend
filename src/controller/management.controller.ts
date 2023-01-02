@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { LOG } from '../util';
 import { deleteNotActiveOrg, fetchActivationToken, getAllOrgs, registerNewOrgCreation } from '../util/database/create-org.database';
+import { activateOrg, deleteEntireOrg } from '../util/org-handler';
 
 function getOrgs(req: Request, res: Response) {
     getAllOrgs((success, data) => {
@@ -33,7 +34,7 @@ function createOrg(req: Request, res: Response) {
                 });
             } else {
                 return res.status(500).json({
-                    message: 'Could not create the org activation token, please',
+                    message: 'Could not create the org activation token, please try again with a new name.',
                     code: 'InternalError'
                 })
             }
@@ -46,16 +47,34 @@ function createOrg(req: Request, res: Response) {
     }
 }
 
-function activateOrg(req: Request, res: Response) {
-    // TODO: Implement activation
-    return res.status(200).json({
-        message: 'This is lucky :D'
-    });
+function activateOrgReq(req: Request, res: Response) {
+    const { token } = req.body;
+    if (token) {
+        activateOrg(token, (success, message, token) => {
+            if (success) {
+                return res.status(200).json({
+                    message: message,
+                    code: 'Success',
+                    body: token
+                })
+            } else {
+                return res.status(500).json({
+                    message: message,
+                    code: 'InternalError'
+                })
+            }
+        })
+    } else {
+        return res.status(400).json({
+            message: 'Missing items in body for this request. Please add a "token" item to the request body.',
+            code: 'IncompleteBody'
+        });
+    }
 }
 
 function deleteOrg(req: Request, res: Response) {
-    const { name } = req.body;
-    const onlyInactive = true; // TODO: Change this once delete method of entire orgs is done :D
+    let { name, onlyInactive } = req.body;
+    typeof(onlyInactive) == 'undefined' ? onlyInactive = true : null;
     if (name) {
         if (onlyInactive) {
             deleteNotActiveOrg(name, (success) => {
@@ -72,12 +91,19 @@ function deleteOrg(req: Request, res: Response) {
                 }
             })
         } else {
-            // TODO: Implement deleting entire Orgs
-            LOG.error('Not Implemented, please help me ;)');
-            return res.status(500).json({
-                message: 'Congrats, you broke VISOR quite a bit. This is a feature, that is not Implemented yet, please wait :D',
-                code: 'NotImplemented'
-            });
+            deleteEntireOrg(name, (success, message) => {
+                if (success) {
+                    return res.status(200).json({
+                        message,
+                        code: 'Success'
+                    })
+                } else {
+                    return res.status(500).json({
+                        message,
+                        code: 'InternalError'
+                    });
+                }
+            })
         }
     } else {
         return res.status(400).json({
@@ -118,7 +144,7 @@ function getOrgActivationToken(req: Request, res: Response) {
 export default {
     getOrgs,
     createOrg,
-    activateOrg,
+    activateOrgReq,
     deleteOrg,
     getOrgActivationToken
 }

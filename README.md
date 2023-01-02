@@ -1,19 +1,5 @@
 # VISOR-Backend
 
-## Test
-**Bold**
-
-*Italic*
-
-`/api/get`
-
-1. ordered list
-
-+ unodered list
-
-
-> Block quote
-
 ## API
 All details to the requests and responses for those requests.
 
@@ -65,7 +51,7 @@ body: `{ "token": "{org-activation-token}" }`
 
 Headers: None
 
-Return: VISOR API Response
+Return: VISOR API Response with a body like this: `{ "orgToken": "{org-token}", "userToken": "{user-token}" }` this body can then be used to form a VISOR-Token. (The User-Token here is generated from the `requester` used to register the new Org. This User is automatically the admin for the Org and has all rights on this Org.)
 
 Codes:
  + 400: Org already active or body missing
@@ -160,7 +146,7 @@ TBD: Define Database structures
 For every path you need the following header:
 `X-VISOR-API-Key`
 with a VISOR-API-Key. This API Key is made up of the following parts:
-`<user-key>-<org-key>`
+`<user-token>-<org-token>`
 
 Here is how these Keys can access the different reports and how user Activity is tracked:
 ![The Overview of the Backend / Database architecture for VISOR.](/images/VISOR-Backend-Overview.png "VISOR Overview Diagram")
@@ -174,8 +160,10 @@ Here is how these Keys can access the different reports and how user Activity is
 | Plan API's | Need to plan all API paths and request and response details | Done | FPG Schiba |
 | Plan Authentication | Describe and define the authentication details for the backend | Done | FPG Schiba |
 | Implement Admin Authentication | Implement the defined authentication method as an Administrator of VISOR | Done | FPG Schiba |
-| Implement Management | Define and implement all paths needed to manage VISOR as a whole. | In Progress | FPG Schiba |
-| Implement Org Activation | Define and Implement how Orgs will be created with their activation token. | Open | FPG Schiba |
+| Implement Management | Define and implement all paths needed to manage VISOR as a whole. | Done | FPG Schiba |
+| Implement Org Activation | Define and Implement how Orgs will be created with their activation token. | Done | FPG Schiba |
+| Plan User Management for Orgs | Define the User Management within Orgs, with it the Authentication. | Open | FPG Schiba |
+| Implement user Management | Roles, Path Auth and tokens. Implement them all, in order to have a clean API. | Open | FPG Schiba |
 | Implement Org Authentication | Define and Implement a authentication for users with orgs | Open | FPG Schiba |
 | Plan Reports | Define and plan search quarries for VISOR Reports | Open | FPG Schiba |
 | Implement Reports | Implement the planned quarries and Paths and test it with the Overlay | Open | FPG Schiba |

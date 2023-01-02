@@ -25,3 +25,39 @@ export function getReportsTableModelWithName(tableName: string) {
         TableName: tableName
     } as CreateTableInput
 }
+
+export function getUsersTableModelWithName(tableName: string) {
+    return {
+        AttributeDefinitions: [
+            {
+                AttributeName: "token",
+                AttributeType: "S"
+            }
+        ],
+        KeySchema: [
+            {
+                AttributeName: "token",
+                KeyType: "HASH"
+            }
+        ],
+        TableName: tableName
+    } as CreateTableInput
+}
+
+export function getChangesTableModelWithName(tableName: string) {
+    return {
+        AttributeDefinitions: [
+            {
+                AttributeName: "id",
+                AttributeType: "S"
+            }
+        ],
+        KeySchema: [
+            {
+                AttributeName: "id",
+                KeyType: "HASH"
+            }
+        ],
+        TableName: tableName
+    } as CreateTableInput
+}
