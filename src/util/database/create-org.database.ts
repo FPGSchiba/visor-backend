@@ -78,14 +78,14 @@ export function deleteNotActiveOrg(orgName: string, callback: (success: boolean)
     })
 }
 
-export function getOrgInfo(orgToken: string, callback: (success: boolean, data?: {orgName: string, requester: string}) => void) {
+export function getOrgInfo(activationKey: string, callback: (success: boolean, data?: {orgName: string, requester: string}) => void) {
     const query = {
-        "TableName": "private-org-creations",
+        "TableName": ORG_CREATION_TABLE,
         "ConsistentRead": false,
         "FilterExpression": "#d8850 = :d8850 and #d8851 = :d8851",
         "ExpressionAttributeValues": {
             ":d8850": {
-                "S": orgToken
+                "S": activationKey
             },
             ":d8851": {
                 "BOOL": false
@@ -137,4 +137,36 @@ export function activateOrgRecord(orgName: string, callback: (success: boolean, 
             callback(false);
         }
     });
+}
+
+export function getOrgNameFromKey(orgKey: string, callback: (success: boolean, orgName?: string) => void) {
+    const query = {
+        "TableName": ORG_CREATION_TABLE,
+        "ConsistentRead": false,
+        "FilterExpression": "#d8850 = :d8850 and #d8851 = :d8851",
+        "ExpressionAttributeValues": {
+            ":d8850": {
+                "S": orgKey
+            },
+            ":d8851": {
+                "BOOL": true
+            }
+        },
+        "ExpressionAttributeNames": {
+            "#d8850": "orgKey",
+            "#d8851": "activated"
+        }
+    }
+    filterTable(query, (success, data) => {
+        if(success) {
+            if (data?.Items?.length == 1) {
+                const result = data?.Items[0];
+                callback(true, result.orgName.S);
+            } else {
+                callback(false);
+            }
+        } else {
+            callback(false);
+        }
+    })
 }

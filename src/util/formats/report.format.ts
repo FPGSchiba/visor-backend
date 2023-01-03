@@ -133,7 +133,9 @@ export interface IVISORLocation {
 }
 
 export interface IVISORReport {
+    id: string;
     name: string;
+    approved: boolean;
     location: IVISORLocation;
     reportMeta: IVISORReportMeta;
     locationDetails: IVISORLocationDetails;

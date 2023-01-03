@@ -7,5 +7,10 @@ export interface IUser {
 export interface IPermission {
     name: string;
     roles: string[];
-    access: string; // Path which can be accessed
+    access: IAccess; // Path which can be accessed
+}
+
+export interface IAccess {
+    path: string,
+    method: string
 }

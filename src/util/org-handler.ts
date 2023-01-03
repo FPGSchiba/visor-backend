@@ -1,3 +1,4 @@
+import { TABLE_EXTENSION_CHANGES, TABLE_EXTENSION_REPORTS, TABLE_EXTENSION_USERS } from "./config";
 import { activateOrgRecord, deleteNotActiveOrg, getOrgInfo } from "./database/create-org.database";
 import { createTable, deleteTable } from "./database/database";
 import { createUser } from "./database/org-users.database";
@@ -10,9 +11,9 @@ export async function activateOrg(activationToken: string, callback: (success: b
         if (success && data) {
             const { orgName, requester } = data;
             // Create Tables
-            const userTableName = `${orgName.toLowerCase()}-users-table`;
-            const changesTableName = `${orgName.toLowerCase()}-changes-table`;
-            const reportsTableName = `${orgName.toLowerCase()}-reports-table`;
+            const userTableName = `${orgName.toLowerCase()}${TABLE_EXTENSION_USERS}`;
+            const changesTableName = `${orgName.toLowerCase()}${TABLE_EXTENSION_CHANGES}`;
+            const reportsTableName = `${orgName.toLowerCase()}${TABLE_EXTENSION_REPORTS}`;
             
             const userTable = getUsersTableModelWithName(userTableName);
             const changesTable = getChangesTableModelWithName(changesTableName);

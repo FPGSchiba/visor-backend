@@ -1,5 +1,4 @@
 import { Request, Response } from 'express';
-import { LOG } from '../util';
 import { deleteNotActiveOrg, fetchActivationToken, getAllOrgs, registerNewOrgCreation } from '../util/database/create-org.database';
 import { activateOrg, deleteEntireOrg } from '../util/org-handler';
 
@@ -9,7 +8,7 @@ function getOrgs(req: Request, res: Response) {
             return res.status(200).json({
                 message: 'Successfully fetched all Orgs.',
                 code: 'Success',
-                body: data
+                data
             })
         } else {
             return res.status(500).json({
@@ -55,7 +54,7 @@ function activateOrgReq(req: Request, res: Response) {
                 return res.status(200).json({
                     message: message,
                     code: 'Success',
-                    body: token
+                    data: token
                 })
             } else {
                 return res.status(500).json({
@@ -122,7 +121,7 @@ function getOrgActivationToken(req: Request, res: Response) {
                 return res.status(200).json({
                     message: 'Successfully fetched activation Token.',
                     code: 'Success',
-                    body: {
+                    data: {
                         activationToken: token
                     }
                 })

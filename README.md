@@ -1,5 +1,12 @@
 # VISOR-Backend
 
+## VISOR Format
+
+```
+{
+    "name": "Test"
+}
+```
 ## API
 All details to the requests and responses for those requests.
 
@@ -181,9 +188,11 @@ Codes:
 
 ### Delete User
 
-Route: `/users/delete?handle={user-handle}`
+Route: `/users/delete`
 
-Method: `DELETE`
+Method: `POST`
+
+body: `{ "token": "{user-key}" }`
 
 Headers: `X-VISOR-API-Key: {VISOR-key}` (Only Users with the role: `Admin` will have access)
 
@@ -198,15 +207,118 @@ Codes:
 
 ### Get VISORs
 
-TBD
+Route: `/visor/list`
 
-### Created VISOR
+TODO: Define search parameters
 
-TBD
+Method: `GET`
+
+Headers: `X-VISOR-API-Key: {VISOR-key}`
+
+Return: VISOR API Response, with a body: TBD (small VISOR list)
+
+Codes:
+ + 401: Not Authorized
+ + 500: Something unexpected happened
+ + 200: OK - Information returned
+
+### Get specific VISOR
+
+Route: `/visor/:visor-name:`
+
+TODO: Define return field parameters
+
+Method: `GET`
+
+Headers: `X-VISOR-API-Key: {VISOR-key}`
+
+Return: VISOR API Response, with a body: look at the VISOR template
+
+Codes:
+ + 401: Not Authorized
+ + 404: VISOR not found
+ + 500: Something unexpected happened
+ + 200: OK - Information returned
+
+### Create VISOR
+
+Route: `/visor/create`
+
+Method: `POST`
+
+Body: Look at a default VISOR report
+
+Headers: `X-VISOR-API-Key: {VISOR-key}`
+
+Return: VISOR API Response
+
+Codes:
+ + 400: Parameter missing
+ + 401: Not Authorized
+ + 500: Something unexpected happened
+ + 200: OK - Information returned
 
 ### Update VISOR
 
-TBD
+Route: `/visor/:visor-name:`
+
+Method: `POST`
+
+body: Look at a default VISOR report
+
+Headers: `X-VISOR-API-Key: {VISOR-key}`
+
+Return: VISOR API Response
+
+Codes:
+ + 400: Parameter missing
+ + 401: Not Authorized
+ + 404: VISOR not found
+ + 500: Something unexpected happened
+ + 200: OK - Information returned
+
+
+### Approve VISOR
+
+Info: Approving a VISOR will lock a report and you cannot edit this version. If you make a change to this report again, the approved sign will disappear.
+
+Route: `/visor/approve`
+
+Method: `POST`
+
+body: `{ "name": "{visor-name}", "approverHandle": "{approver-handle}" }`
+ * If no `approverHandle` is given, the user handle from the request auth is used.
+
+Headers: `X-VISOR-API-Key: {VISOR-key}`
+
+Return: VISOR API Response
+
+Codes:
+ + 400: Parameter missing
+ + 401: Not Authorized
+ + 404: VISOR not found
+ + 500: Something unexpected happened
+ + 200: OK - Information returned
+
+### Delete VISOR
+
+Route: `/visor/delete`
+
+Method: `POST`
+
+body: `{ "name": "{visor-name}", "deletionReason": "{reason}" }`
+ * The reason here is used to safe the reason to changes in order to have clarity why reports can't be found
+
+Headers: `X-VISOR-API-Key: {VISOR-key}`
+
+Return: VISOR API Response
+
+Codes:
+ + 400: Parameter missing
+ + 401: Not Authorized
+ + 404: VISOR not found
+ + 500: Something unexpected happened
+ + 200: OK - Information returned
 
 ### Reports & Changes
 
@@ -226,9 +338,20 @@ Here is how these Keys can access the different reports and how user Activity is
 ![The Overview of the Backend / Database architecture for VISOR.](/images/VISOR-Backend-Overview.png "VISOR Overview Diagram")
 
 ### Rights
-| API Path | Admin Right | Editor Right | Contributor Right |
-| -------- | ----------- | ------------ | ----------------- |
-| TBD | TBD | TBD | TBD |
+| Permission Name | API Path | Method | Admin Right | Contributor Right | Editor Right |
+| --------------- | -------- | ------ | ----------- | ------------ | ----------------- |
+| `createUser` | `/users/create` | `POST` | Yes | No | No |
+| `listUsers` | `/users/list` | `GET` | Yes | No | No |
+| `getUser` | `/users/:handle:` | `GET` | Yes | No | No |
+| `editUser` | `/users/:handle:` | `POST` | Yes | No | No |
+| `deleteUser` | `/users/delete` | `POST` | Yes | No | No |
+| `getVISORs` | `/visor/list` | `GET` | Yes | Yes | Yes |
+| `createVISOR` | `/visor/create` | `POST` | Yes | Yes | Yes |
+| `getVISOR` | `/visor/:visor-name:` | `GET` | Yes | Yes | Yes |
+| `updateVISOR` | `/visor/:visor-name:` | `POST` | Yes | Yes | Yes |
+| `approveVISOR` | `/visor/approve` | `POST` | Yes | Yes | No |
+| `deleteVISOR` | `/visor/delete` | `POST` | Yes | Yes | No |
+
 
 
 ## Development Plans
@@ -242,8 +365,8 @@ Here is how these Keys can access the different reports and how user Activity is
 | Implement Admin Authentication | Implement the defined authentication method as an Administrator of VISOR | Done | FPG Schiba |
 | Implement Management | Define and implement all paths needed to manage VISOR as a whole. | Done | FPG Schiba |
 | Implement Org Activation | Define and Implement how Orgs will be created with their activation token. | Done | FPG Schiba |
-| Plan User Management for Orgs | Define the User Management within Orgs, with it the Authentication. | Open | FPG Schiba |
-| Implement user Management | Roles, Path Auth and tokens. Implement them all, in order to have a clean API. | Open | FPG Schiba |
+| Plan User Management for Orgs | Define the User Management within Orgs, with it the Authentication. | In Progress | FPG Schiba |
+| Implement user Management | Roles, Path Auth and tokens. Implement them all, in order to have a clean API. | In Progress | FPG Schiba |
 | Implement Org Authentication | Define and Implement a authentication for users with orgs | Open | FPG Schiba |
 | Plan Reports | Define and plan search quarries for VISOR Reports | Open | FPG Schiba |
 | Implement Reports | Implement the planned quarries and Paths and test it with the Overlay | Open | FPG Schiba |
