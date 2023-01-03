@@ -56,6 +56,7 @@ Return: VISOR API Response with a body like this: `{ "orgToken": "{org-token}", 
 Codes:
  + 400: Org already active or body missing
  + 401: No such activation-token
+ + 500: Something unexpected happened
  + 200: OK - Org activated
 
 ### List Orgs
@@ -71,6 +72,7 @@ Return: VISOR API Response with a list of org-names & org-ids
 Codes:
  + 400: Body missing
  + 401: Not Authorized
+ + 500: Something unexpected happened
  + 200: OK - Information returned
 
 ### Delete Org (setting with DB or only if not activated)
@@ -89,6 +91,7 @@ Return: VISOR API Response, if the call worked
 Codes:
  + 400: Body missing
  + 401: Not Authorized
+ + 500: Something unexpected happened
  + 200: OK - Org deleted
 
 ### Get activation Token
@@ -104,6 +107,93 @@ Return: VISOR API Response, with a body holding the activation token
 Codes:
  + 400: Body missing
  + 401: Not Authorized
+ + 500: Something unexpected happened
+ + 200: OK - Information returned
+
+### Create User
+
+Route: `/users/create`
+
+Method: `POST`
+
+body: `{ "handle": "{user-handle}", "role": "{user-role}" }`
+ * The role can be 3 things: `Admin`, `Editor` and `Contributor`. Those 3 roles have all different Rights, please refer to the Rights section in this Document.
+
+Headers: `X-VISOR-API-Key: {VISOR-key}` (Only Users with the role: `Admin` will have access)
+
+Return: VISOR API Response, with a body holding the user key
+
+Codes:
+ + 400: Body missing
+ + 401: Not Authorized
+ + 500: Something unexpected happened
+ + 200: OK - Information returned
+
+### List Users
+
+Route: `/users/list`
+
+Method: `GET`
+
+Headers: `X-VISOR-API-Key: {VISOR-key}` (Only Users with the role: `Admin` will have access)
+
+Return: VISOR API Response, with a body holding the list of users (`{ "handle": "{user-handle}", "role": "{user-role}", "token": "{user-key}" }`)
+
+Codes:
+ + 401: Not Authorized
+ + 500: Something unexpected happened
+ + 200: OK - Information returned
+
+### Get specific user
+
+Route: `/users/:handle:`
+
+Method: `GET`
+
+Headers: `X-VISOR-API-Key: {VISOR-key}` (Only Users with the role: `Admin` will have access)
+
+Return: VISOR API Response, with a body holding the user information
+
+Codes:
+ + 401: Not Authorized
+ + 404: User not found
+ + 500: Something unexpected happened
+ + 200: OK - Information returned
+
+### Edit user
+
+Route: `/users/:handle:`
+
+Method: `POST`
+
+body: `{ "handle": "{user-handle}", "update": { "role": "{user-role}" }}`
+ * The Edit method can only be used to change the Users role. The Handle cannot be changed and the `user-key` depends on the Handle. Please delete and recreate users if handle changes.
+
+Headers: `X-VISOR-API-Key: {VISOR-key}` (Only Users with the role: `Admin` will have access)
+
+Return: VISOR API Response
+
+Codes:
+ + 400: Body missing
+ + 401: Not Authorized
+ + 500: Something unexpected happened
+ + 200: OK - Information returned
+
+### Delete User
+
+Route: `/users/delete?handle={user-handle}`
+
+Method: `DELETE`
+
+Headers: `X-VISOR-API-Key: {VISOR-key}` (Only Users with the role: `Admin` will have access)
+
+Return: VISOR API Response
+
+Codes:
+ + 400: Parameter missing
+ + 401: Not Authorized
+ + 404: User not found
+ + 500: Something unexpected happened
  + 200: OK - Information returned
 
 ### Get VISORs
@@ -115,22 +205,6 @@ TBD
 TBD
 
 ### Update VISOR
-
-TBD
-
-### Create User
-
-TBD
-
-### List Users
-
-TBD
-
-### Get specific user
-
-TBD
-
-### Edit user
 
 TBD
 
@@ -150,6 +224,12 @@ with a VISOR-API-Key. This API Key is made up of the following parts:
 
 Here is how these Keys can access the different reports and how user Activity is tracked:
 ![The Overview of the Backend / Database architecture for VISOR.](/images/VISOR-Backend-Overview.png "VISOR Overview Diagram")
+
+### Rights
+| API Path | Admin Right | Editor Right | Contributor Right |
+| -------- | ----------- | ------------ | ----------------- |
+| TBD | TBD | TBD | TBD |
+
 
 ## Development Plans
 
