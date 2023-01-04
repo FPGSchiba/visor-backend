@@ -29,7 +29,7 @@ const beginningPermissions = [
     {
         name: 'getUser',
         access: {
-            path: '/users/*',
+            path: '/users/get',
             method: 'GET'
         },
         roles: [
@@ -39,7 +39,7 @@ const beginningPermissions = [
     {
         name: 'editUser',
         access: {
-            path: '/users/*',
+            path: '/users/update',
             method: 'POST'
         },
         roles: [
@@ -83,7 +83,7 @@ const beginningPermissions = [
     {
         name: 'getVISOR',
         access: {
-            path: '/visor/*',
+            path: '/visor/get',
             method: 'GET'
         },
         roles: [
@@ -95,7 +95,7 @@ const beginningPermissions = [
     {
         name: 'updateVISOR',
         access: {
-            path: '/visor/*',
+            path: '/visor/update',
             method: 'POST'
         },
         roles: [

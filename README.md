@@ -153,7 +153,7 @@ Codes:
 
 ### Get specific user
 
-Route: `/users/:handle:`
+Route: `/users/get?handle={handle}`
 
 Method: `GET`
 
@@ -169,7 +169,7 @@ Codes:
 
 ### Edit user
 
-Route: `/users/:handle:`
+Route: `/users/update`
 
 Method: `POST`
 
@@ -224,7 +224,7 @@ Codes:
 
 ### Get specific VISOR
 
-Route: `/visor/:visor-name:`
+Route: `/visor/get?name={visor-name}`
 
 TODO: Define return field parameters
 
@@ -260,7 +260,7 @@ Codes:
 
 ### Update VISOR
 
-Route: `/visor/:visor-name:`
+Route: `/visor/update?name={visor-name}`
 
 Method: `POST`
 
@@ -342,13 +342,13 @@ Here is how these Keys can access the different reports and how user Activity is
 | --------------- | -------- | ------ | ----------- | ------------ | ----------------- |
 | `createUser` | `/users/create` | `POST` | Yes | No | No |
 | `listUsers` | `/users/list` | `GET` | Yes | No | No |
-| `getUser` | `/users/:handle:` | `GET` | Yes | No | No |
-| `editUser` | `/users/:handle:` | `POST` | Yes | No | No |
+| `getUser` | `/users/get` | `GET` | Yes | No | No |
+| `editUser` | `/users/update` | `POST` | Yes | No | No |
 | `deleteUser` | `/users/delete` | `POST` | Yes | No | No |
 | `getVISORs` | `/visor/list` | `GET` | Yes | Yes | Yes |
 | `createVISOR` | `/visor/create` | `POST` | Yes | Yes | Yes |
-| `getVISOR` | `/visor/:visor-name:` | `GET` | Yes | Yes | Yes |
-| `updateVISOR` | `/visor/:visor-name:` | `POST` | Yes | Yes | Yes |
+| `getVISOR` | `/visor/get` | `GET` | Yes | Yes | Yes |
+| `updateVISOR` | `/visor/update` | `POST` | Yes | Yes | Yes |
 | `approveVISOR` | `/visor/approve` | `POST` | Yes | Yes | No |
 | `deleteVISOR` | `/visor/delete` | `POST` | Yes | Yes | No |
 
