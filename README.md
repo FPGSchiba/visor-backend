@@ -192,7 +192,8 @@ Route: `/users/delete`
 
 Method: `POST`
 
-body: `{ "token": "{user-key}" }`
+body: `{ "token": "{user-key}", "reason": "{some-reason}" }`
+ * reason here is optional, but it would be nice for admins to know why a user was deleted.
 
 Headers: `X-VISOR-API-Key: {VISOR-key}` (Only Users with the role: `Admin` will have access)
 

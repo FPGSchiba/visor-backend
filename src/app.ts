@@ -7,6 +7,9 @@ import { runMigration } from './util/migration-manager';
 import managementRouter from './router/management.router';
 import { adminAuthentication } from './middleware/admin-auth';
 import managementController from './controller/management.controller';
+import { orgAuthentication } from './middleware/visor-auth';
+import usersRouter from './router/users.router';
+import visorRouter from './router/visor.router';
 
 app.use(expressWinston.logger(loggerOptions));
 
@@ -31,6 +34,10 @@ app.use((req, res, next) => {
 });
 
 app.use('/api', adminAuthentication, managementRouter);
+
+app.use('/users', orgAuthentication, usersRouter);
+
+app.use('/visor', orgAuthentication, visorRouter);
 
 app.post('/activate-org', managementController.activateOrgReq);
 
