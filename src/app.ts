@@ -43,7 +43,7 @@ app.use('/visor', orgAuthentication, visorRouter);
 app.post('/activate-org', managementController.activateOrgReq);
 
 app.get('/', (req, res) => {
-    res.send(`<h1>FISOR Backend v${pj.version}</h1>
+    res.send(`<h1>VISOR Backend v${pj.version}</h1>
     <h2>${pj.description}</h2>`);
 });
 
