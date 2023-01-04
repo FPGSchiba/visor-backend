@@ -46,6 +46,4 @@ app.get('/', (req, res) => {
     <h2>${pj.description}</h2>`);
 });
 
-// TODO: POST activate-org
-
 export default app;
