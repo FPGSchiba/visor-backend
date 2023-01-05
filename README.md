@@ -354,8 +354,9 @@ TBD: Define Database structures
 
 ### Organization
 For Org-Logins there are 2 Authentication Headers needed:
-`X-VISOR-User-Key`: The Unique User Key of the user, that is making a request to the VISOR API.
-`X-VISOR-Org-Key`: The Unique Org Key for the Organization the user is from.
+
+* `X-VISOR-User-Key`: The Unique User Key of the user, that is making a request to the VISOR API.
+* `X-VISOR-Org-Key`: The Unique Org Key for the Organization the user is from.
 
  > If those keys get lost, please contact a VISOR Administrator or recreate the User in question.
 
