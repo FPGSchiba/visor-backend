@@ -1,7 +1,5 @@
 # VISOR-Backend
-
-## VISOR Format
-
+## VISOR Format
 ```
 {
     "name": "Test"
@@ -10,13 +8,14 @@
 ## API
 All details to the requests and responses for those requests.
 
-### API Response
+### API Resopnse
 
 Is a message that always has 2 Properties:
  1. `code` that depends on the Path called on the API
  2. `message` that depends on the Path called on the API
 
 And in Cases where you request Information, there is a 3rd Property:
+
  3. `data` this property holds data, that was requested
 
 ### Default
@@ -48,7 +47,7 @@ Codes:
  + 500: Something unexpected happened
  + 200: OK - Org was created
 
-### Activate Org
+### Activate Org
 
 Route: `/activate-org`
 
@@ -117,7 +116,7 @@ Codes:
  + 500: Something unexpected happened
  + 200: OK - Information returned
 
-### Create User
+### Create User
 
 Route: `/users/create`
 
@@ -138,7 +137,7 @@ Codes:
  + 500: Something unexpected happened
  + 200: OK - Information returned
 
-### List Users
+### List Users
 
 Route: `/users/list`
 
@@ -194,7 +193,7 @@ Codes:
  + 500: Something unexpected happened
  + 200: OK - Information returned
 
-### Delete User
+### Delete User
 
 Route: `/users/delete`
 
@@ -235,7 +234,7 @@ Codes:
  + 500: Something unexpected happened
  + 200: OK - Information returned
 
-### Get specific VISOR
+### Get specific VISOR
 
 Route: `/visor/get?name={visor-name}`
 
@@ -275,7 +274,7 @@ Codes:
  + 500: Something unexpected happened
  + 200: OK - Information returned
 
-### Update VISOR
+### Update VISOR
 
 Route: `/visor/update?name={visor-name}`
 
@@ -321,7 +320,7 @@ Codes:
  + 500: Something unexpected happened
  + 200: OK - Information returned
 
-### Delete VISOR
+### Delete VISOR
 
 Route: `/visor/delete`
 
@@ -343,7 +342,7 @@ Codes:
  + 500: Something unexpected happened
  + 200: OK - Information returned
 
-### Reports & Changes
+### Reports & Changes
 
 TBD
 
@@ -353,7 +352,7 @@ TBD: Define Database structures
 
 ## Authentication
 
-### Organization
+### Organization
 For Org-Logins there are 2 Authentication Headers needed:
 `X-VISOR-User-Key`: The Unique User Key of the user, that is making a request to the VISOR API.
 `X-VISOR-Org-Key`: The Unique Org Key for the Organization the user is from.
@@ -369,7 +368,7 @@ For every admin path you need the following header:
 Here is how these Keys can access the different reports and how user Activity is tracked:
 ![The Overview of the Backend / Database architecture for VISOR.](/images/VISOR-Backend-Overview.png "VISOR Overview Diagram")
 
-### Rights
+## Rights
 | Permission Name | API Path | Method | Admin Right | Contributor Right | Editor Right |
 | --------------- | -------- | ------ | ----------- | ------------ | ----------------- |
 | `createUser` | `/users/create` | `POST` | Yes | No | No |
