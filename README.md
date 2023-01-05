@@ -126,7 +126,9 @@ Method: `POST`
 body: `{ "handle": "{user-handle}", "role": "{user-role}" }`
  * The role can be 3 things: `Admin`, `Editor` and `Contributor`. Those 3 roles have all different Rights, please refer to the Rights section in this Document.
 
-Headers: `X-VISOR-API-Key: {VISOR-key}` (Only Users with the role: `Admin` will have access)
+Headers: 
+* `X-VISOR-User-Key: {VISOR-user-key}` (Only Users with the role: `Admin` will have access)
+* `X-VISOR-Org-Key: {VISOR-org-key}` 
 
 Return: VISOR API Response, with a body holding the user key
 
@@ -142,7 +144,9 @@ Route: `/users/list`
 
 Method: `GET`
 
-Headers: `X-VISOR-API-Key: {VISOR-key}` (Only Users with the role: `Admin` will have access)
+Headers: 
+* `X-VISOR-User-Key: {VISOR-user-key}` (Only Users with the role: `Admin` will have access)
+* `X-VISOR-Org-Key: {VISOR-org-key}` 
 
 Return: VISOR API Response, with a body holding the list of users (`{ "handle": "{user-handle}", "role": "{user-role}", "token": "{user-key}" }`)
 
@@ -157,7 +161,9 @@ Route: `/users/get?handle={handle}`
 
 Method: `GET`
 
-Headers: `X-VISOR-API-Key: {VISOR-key}` (Only Users with the role: `Admin` will have access)
+Headers: 
+* `X-VISOR-User-Key: {VISOR-user-key}` (Only Users with the role: `Admin` will have access)
+* `X-VISOR-Org-Key: {VISOR-org-key}` 
 
 Return: VISOR API Response, with a body holding the user information
 
@@ -176,7 +182,9 @@ Method: `POST`
 body: `{ "handle": "{user-handle}", "update": { "role": "{user-role}" }}`
  * The Edit method can only be used to change the Users role. The Handle cannot be changed and the `user-key` depends on the Handle. Please delete and recreate users if handle changes.
 
-Headers: `X-VISOR-API-Key: {VISOR-key}` (Only Users with the role: `Admin` will have access)
+Headers: 
+* `X-VISOR-User-Key: {VISOR-user-key}` (Only Users with the role: `Admin` will have access)
+* `X-VISOR-Org-Key: {VISOR-org-key}` 
 
 Return: VISOR API Response
 
@@ -195,7 +203,9 @@ Method: `POST`
 body: `{ "token": "{user-key}", "reason": "{some-reason}" }`
  * reason here is optional, but it would be nice for admins to know why a user was deleted.
 
-Headers: `X-VISOR-API-Key: {VISOR-key}` (Only Users with the role: `Admin` will have access)
+Headers: 
+* `X-VISOR-User-Key: {VISOR-user-key}` (Only Users with the role: `Admin` will have access)
+* `X-VISOR-Org-Key: {VISOR-org-key}` 
 
 Return: VISOR API Response
 
@@ -214,7 +224,9 @@ TODO: Define search parameters
 
 Method: `GET`
 
-Headers: `X-VISOR-API-Key: {VISOR-key}`
+Headers: 
+* `X-VISOR-User-Key: {VISOR-user-key}`
+* `X-VISOR-Org-Key: {VISOR-org-key}` 
 
 Return: VISOR API Response, with a body: TBD (small VISOR list)
 
@@ -231,7 +243,9 @@ TODO: Define return field parameters
 
 Method: `GET`
 
-Headers: `X-VISOR-API-Key: {VISOR-key}`
+Headers: 
+* `X-VISOR-User-Key: {VISOR-user-key}`
+* `X-VISOR-Org-Key: {VISOR-org-key}` 
 
 Return: VISOR API Response, with a body: look at the VISOR template
 
@@ -249,7 +263,9 @@ Method: `POST`
 
 Body: Look at a default VISOR report
 
-Headers: `X-VISOR-API-Key: {VISOR-key}`
+Headers: 
+* `X-VISOR-User-Key: {VISOR-user-key}`
+* `X-VISOR-Org-Key: {VISOR-org-key}` 
 
 Return: VISOR API Response
 
@@ -267,7 +283,9 @@ Method: `POST`
 
 body: Look at a default VISOR report
 
-Headers: `X-VISOR-API-Key: {VISOR-key}`
+Headers: 
+* `X-VISOR-User-Key: {VISOR-user-key}`
+* `X-VISOR-Org-Key: {VISOR-org-key}` 
 
 Return: VISOR API Response
 
@@ -290,7 +308,9 @@ Method: `POST`
 body: `{ "name": "{visor-name}", "approverHandle": "{approver-handle}" }`
  * If no `approverHandle` is given, the user handle from the request auth is used.
 
-Headers: `X-VISOR-API-Key: {VISOR-key}`
+Headers: 
+* `X-VISOR-User-Key: {VISOR-user-key}`
+* `X-VISOR-Org-Key: {VISOR-org-key}` 
 
 Return: VISOR API Response
 
@@ -310,7 +330,9 @@ Method: `POST`
 body: `{ "name": "{visor-name}", "deletionReason": "{reason}" }`
  * The reason here is used to safe the reason to changes in order to have clarity why reports can't be found
 
-Headers: `X-VISOR-API-Key: {VISOR-key}`
+Headers: 
+* `X-VISOR-User-Key: {VISOR-user-key}`
+* `X-VISOR-Org-Key: {VISOR-org-key}` 
 
 Return: VISOR API Response
 
@@ -330,10 +352,19 @@ TBD
 TBD: Define Database structures
 
 ## Authentication
-For every path you need the following header:
-`X-VISOR-API-Key`
-with a VISOR-API-Key. This API Key is made up of the following parts:
-`<user-token>-<org-token>`
+
+### Organization
+For Org-Logins there are 2 Authentication Headers needed:
+`X-VISOR-User-Key`: The Unique User Key of the user, that is making a request to the VISOR API.
+`X-VISOR-Org-Key`: The Unique Org Key for the Organization the user is from.
+
+ > If those keys get lost, please contact a VISOR Administrator or recreate the User in question.
+
+### Admin
+For every admin path you need the following header:
+`X-VISOR-API-Key` with a VISOR-API-Key. 
+
+ > This VISOR API key is accessible only for VISOR Administrators.
 
 Here is how these Keys can access the different reports and how user Activity is tracked:
 ![The Overview of the Backend / Database architecture for VISOR.](/images/VISOR-Backend-Overview.png "VISOR Overview Diagram")
