@@ -57,7 +57,7 @@ body: `{ "token": "{org-activation-token}" }`
 
 Headers: None
 
-Return: VISOR API Response with a body like this: `{ "orgToken": "{org-token}", "userToken": "{user-token}" }` this body can then be used to form a VISOR-Token. (The User-Token here is generated from the `requester` used to register the new Org. This User is automatically the admin for the Org and has all rights on this Org.)
+Return: VISOR API Response with data like this: `{ "orgToken": "{org-token}", "userToken": "{user-token}" }` this body can then be used to form a VISOR-Token. (The User-Token here is generated from the `requester` used to register the new Org. This User is automatically the admin for the Org and has all rights on this Org.)
 
 Codes:
  + 400: Org already active or body missing
@@ -108,7 +108,7 @@ Method: `GET`
 
 Headers: `X-VISOR-API-Key: {admin-token}` (The admin token is only accessible to VISOR Administrators)
 
-Return: VISOR API Response, with a body holding the activation token
+Return: VISOR API Response, with data holding the activation token
 
 Codes:
  + 400: Body missing
@@ -129,7 +129,7 @@ Headers:
 * `X-VISOR-User-Key: {VISOR-user-key}` (Only Users with the role: `Admin` will have access)
 * `X-VISOR-Org-Key: {VISOR-org-key}` 
 
-Return: VISOR API Response, with a body holding the user key
+Return: VISOR API Response, with data holding the user key: `{"userKey": "{new-user-key}"}`
 
 Codes:
  + 400: Body missing
@@ -139,7 +139,12 @@ Codes:
 
 ### List Users
 
-Route: `/users/list`
+Route: `/users/list?length={number}&from={number}&to={number}`
+
+Params:
+ * (Optional) `length`: A number which defines the maximal length of the return array
+ * (Optional) `from`: A number to say from which user on will be returned
+ * (Optional) `to`: A number to say to which user in the array will be returned NOTE: `to` and `from` need to be together
 
 Method: `GET`
 
@@ -147,7 +152,7 @@ Headers:
 * `X-VISOR-User-Key: {VISOR-user-key}` (Only Users with the role: `Admin` will have access)
 * `X-VISOR-Org-Key: {VISOR-org-key}` 
 
-Return: VISOR API Response, with a body holding the list of users (`{ "handle": "{user-handle}", "role": "{user-role}", "token": "{user-key}" }`)
+Return: VISOR API Response, with data holding the list of users (`{ "handle": "{user-handle}", "role": "{user-role}", "token": "{user-key}" }`) and the information how many users there are: `count`.
 
 Codes:
  + 401: Not Authorized
@@ -164,7 +169,7 @@ Headers:
 * `X-VISOR-User-Key: {VISOR-user-key}` (Only Users with the role: `Admin` will have access)
 * `X-VISOR-Org-Key: {VISOR-org-key}` 
 
-Return: VISOR API Response, with a body holding the user information
+Return: VISOR API Response, with data holding the user information
 
 Codes:
  + 401: Not Authorized
@@ -227,7 +232,7 @@ Headers:
 * `X-VISOR-User-Key: {VISOR-user-key}`
 * `X-VISOR-Org-Key: {VISOR-org-key}` 
 
-Return: VISOR API Response, with a body: TBD (small VISOR list)
+Return: VISOR API Response, with data: TBD (small VISOR list)
 
 Codes:
  + 401: Not Authorized
@@ -246,7 +251,7 @@ Headers:
 * `X-VISOR-User-Key: {VISOR-user-key}`
 * `X-VISOR-Org-Key: {VISOR-org-key}` 
 
-Return: VISOR API Response, with a body: look at the VISOR template
+Return: VISOR API Response, with data: look at the VISOR template
 
 Codes:
  + 401: Not Authorized
@@ -397,9 +402,9 @@ Here is how these Keys can access the different reports and how user Activity is
 | Implement Admin Authentication | Implement the defined authentication method as an Administrator of VISOR | Done | FPG Schiba |
 | Implement Management | Define and implement all paths needed to manage VISOR as a whole. | Done | FPG Schiba |
 | Implement Org Activation | Define and Implement how Orgs will be created with their activation token. | Done | FPG Schiba |
-| Plan User Management for Orgs | Define the User Management within Orgs, with it the Authentication. | In Progress | FPG Schiba |
-| Implement user Management | Roles, Path Auth and tokens. Implement them all, in order to have a clean API. | In Progress | FPG Schiba |
+| Plan User Management for Orgs | Define the User Management within Orgs, with it the Authentication. | Done | FPG Schiba |
+| Implement user Management | Roles, Path Auth and tokens. Implement them all, in order to have a clean API. | Done | FPG Schiba |
 | Implement Org Authentication | Define and Implement a authentication for users with orgs | Open | FPG Schiba |
-| Plan Reports | Define and plan search quarries for VISOR Reports | Open | FPG Schiba |
+| Plan Reports | Define and plan search quarries for VISOR Reports | In Progress | FPG Schiba |
 | Implement Reports | Implement the planned quarries and Paths and test it with the Overlay | Open | FPG Schiba |
 | Changes | Define all paths to changes & reports in order to get a overview of what happens in VISOR | Open | FPG Schiba |

@@ -128,7 +128,7 @@ const beginningPermissions = [
     }
 ] as IPermission[]
 
-export function runMigrationTest(callback: (success: boolean) => void) { // TODO: Change Name of function
+export function runMigration(callback: (success: boolean) => void) {
     getAllTables((tables) => {
         if (!(tables && tables.includes(PERMISSIONS_TABLE_NAME))) {
             const table = getPermissionsTableFromName(PERMISSIONS_TABLE_NAME);

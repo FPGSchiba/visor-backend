@@ -22,6 +22,7 @@ app.use(express.json());
 
 /* Rules */ 
 app.use((req, res, next) => {
+    res.locals.access = { path: req.path, method: req.method }
     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
     res.header('Access-Control-Allow-Credentials', 'true');
     res.header('Access-Control-Allow-Origin', '*');
