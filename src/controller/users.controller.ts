@@ -1,6 +1,8 @@
 import { Request, Response } from 'express';
 import { LOG } from '../util';
+import { getOrgNameFromKey } from '../util/database/create-org.database';
 import * as usersDatabase from '../util/database/org-users.database';
+import { roleAccessValidation } from '../util/database/permissions.database';
 
 function createUser(req: Request, res: Response) {
     const { handle, role} = req.body;
@@ -164,10 +166,57 @@ function deleteUser(req: Request, res: Response) {
     }
 }
 
+function getCurrentUser(req: Request, res: Response) {
+    // Extract both keys
+    const userKey = req.headers['x-visor-user-key'];
+    const orgKey = req.headers['x-visor-org-key'];
+
+    if (userKey && orgKey && typeof(orgKey) == 'string' && typeof(userKey) == 'string') {
+        // Get OrgName if fails => 401
+        getOrgNameFromKey(orgKey, (success, orgName) => {
+            if (success && orgName) {
+                // Get User if fails => 401
+                usersDatabase.getUserFromKey(userKey, orgName, (success, data) => {
+                    if (success && data) {
+                        // Return User Information
+                        return res.status(200).json({
+                            message: 'Successfully fetched current User.',
+                            code: 'Success',
+                            data: {
+                                ...data,
+                                orgName
+                            }
+                        });
+                    } else {
+                        LOG.warn('Wrong VISOR User Key provided.');
+                        return res.status(401).json({
+                            message: 'User with given "X-VISOR-User-Key" does not exist.',
+                            code: 'Unauthorized'
+                        })
+                    }
+                });
+            } else {
+                LOG.warn('Wrong VISOR Org Key provided.');
+                return res.status(401).json({
+                    message: 'Organization with given "X-VISOR-Org-Key" does not exist.',
+                    code: 'Unauthorized'
+                });
+            }
+        });
+    } else {
+        LOG.warn('Protected Path called with not enough Authorization Headers.');
+        return res.status(401).json({
+            message: 'Not all necessary Keys found, please provide: "X-VISOR-User-Key" and "X-VISOR-Org-Key" headers.',
+            code: 'Unauthorized'
+        })
+    }
+}
+
 export default {
     createUser,
     listUser,
     getUser,
     editUser,
-    deleteUser
+    deleteUser,
+    getCurrentUser
 }

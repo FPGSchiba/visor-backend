@@ -116,6 +116,23 @@ Codes:
  + 500: Something unexpected happened
  + 200: OK - Information returned
 
+### Get current User
+
+Route: `/user`
+
+Method: `GET`
+
+Headers: 
+* `X-VISOR-User-Key: {VISOR-user-key}`
+* `X-VISOR-Org-Key: {VISOR-org-key}` 
+
+Return: VISOR API Response, with data holding the user info: `{"handle": "{user-handle}", "role": "{user-role}", "orgName": "{org-name}"}`
+
+Codes:
+ + 401: Not Authorized
+ + 500: Something unexpected happened
+ + 200: OK - Information returned
+
 ### Create User
 
 Route: `/users/create`
@@ -405,6 +422,7 @@ Here is how these Keys can access the different reports and how user Activity is
 | Plan User Management for Orgs | Define the User Management within Orgs, with it the Authentication. | Done | FPG Schiba |
 | Implement user Management | Roles, Path Auth and tokens. Implement them all, in order to have a clean API. | Done | FPG Schiba |
 | Implement Org Authentication | Define and Implement a authentication for users with orgs | Open | FPG Schiba |
+| Add user Functionality to Overlay | Implement Usermanagement and User authentication to VISOR Overlay | In Progress | FPG Schiba |
 | Plan Reports | Define and plan search quarries for VISOR Reports | In Progress | FPG Schiba |
 | Implement Reports | Implement the planned quarries and Paths and test it with the Overlay | Open | FPG Schiba |
 | Changes | Define all paths to changes & reports in order to get a overview of what happens in VISOR | Open | FPG Schiba |

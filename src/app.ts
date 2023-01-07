@@ -10,6 +10,7 @@ import managementController from './controller/management.controller';
 import { orgAuthentication } from './middleware/visor-auth';
 import usersRouter from './router/users.router';
 import visorRouter from './router/visor.router';
+import usersController from './controller/users.controller';
 
 app.use(expressWinston.logger(loggerOptions));
 
@@ -42,6 +43,8 @@ app.use('/users', orgAuthentication, usersRouter);
 app.use('/visor', orgAuthentication, visorRouter);
 
 app.post('/activate-org', managementController.activateOrgReq);
+
+app.get('/user', usersController.getCurrentUser)
 
 app.get('/', (req, res) => {
     res.send(`<h1>VISOR Backend v${pj.version}</h1>
