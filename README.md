@@ -364,6 +364,206 @@ Codes:
  + 500: Something unexpected happened
  + 200: OK - Information returned
 
+### Get all Solar Systems
+
+Route: `/data/get-systems`
+
+Method: `GET`
+
+Headers: 
+* `X-VISOR-User-Key: {VISOR-user-key}`
+* `X-VISOR-Org-Key: {VISOR-org-key}` 
+
+Return: VISOR API Response, with a body holding a list of solar system information
+
+Codes:
+ + 401: Not Authorized
+ + 500: Something unexpected happened
+ + 200: OK - Information returned
+
+
+### Get all Objects for a solar System
+
+Route: `/data/get-system?id={system-id}`
+
+Method: `GET`
+
+Headers: 
+* `X-VISOR-User-Key: {VISOR-user-key}`
+* `X-VISOR-Org-Key: {VISOR-org-key}` 
+
+Return: VISOR API Response, with a body holding the information of a complete solar system
+
+Codes:
+ + 401: Not Authorized
+ + 404: System not found
+ + 500: Something unexpected happened
+ + 200: OK - Information returned
+
+### Add new solar system
+
+Route: `/data-api/create-system`
+
+Method: `POST`
+
+Body:
+```
+{
+    "name": "{system-name}",
+    "stellarObjects": [
+        {
+            "name": "{stellar-object-name}",
+            "type": "{stellar-object-type}",
+            "planetLevelObjects": [ // This is optional (not every stellar Objects will have children)
+                {
+                    "name": "{planet-level-object}",
+                    "type": "{planet-level-object}"
+                }
+            ]
+        }
+    ]
+}
+```
+
+Headers: `X-VISOR-API-Key: {admin-token}` (The admin token is only accessible to VISOR Administrators)
+
+Return: VISOR API Response
+
+Codes:
+ + 401: Not Authorized
+ + 500: Something unexpected happened
+ + 200: OK - Information returned
+
+### Add new stellarObject to solar system
+
+Route: `/data-api/add-stellar-object?id={system-id}`
+ * meaning of this id is the parent System ID
+
+Method: `POST`
+
+Body:
+```
+{
+    "name": "{stellar-object-name}",
+    "type": "{stellar-object-type}",
+    "planetLevelObjects": [ // This is optional (not every stellar Objects will have children)
+        {
+            "name": "{planet-level-object}",
+            "type": "{planet-level-object}"
+        }
+    ]
+}
+```
+
+Headers: `X-VISOR-API-Key: {admin-token}` (The admin token is only accessible to VISOR Administrators)
+
+Return: VISOR API Response
+
+Codes:
+ + 401: Not Authorized
+ + 404: System not found
+ + 500: Something unexpected happened
+ + 200: OK - Information returned
+
+### Add new planetLevelObject to stellarObject
+
+Route: `/data-api/add-planet-object?id={stellar-object-id}`
+ * meaning of this id is the parent stellarObject ID
+
+Method: `POST`
+
+Body:
+```
+{
+    "name": "{planet-level-object-name}",
+    "type": "{planet-level-object-type}",
+}
+```
+
+Headers: `X-VISOR-API-Key: {admin-token}` (The admin token is only accessible to VISOR Administrators)
+
+Return: VISOR API Response
+
+Codes:
+ + 401: Not Authorized
+ + 404: Stellar Object not found
+ + 500: Something unexpected happened
+ + 200: OK - Information returned
+
+### Delete Solar System
+
+Route: `/data-api/delete-system`
+
+Method: `POST`
+
+Body:
+```
+{
+    "id": "{system-id}"
+}
+```
+
+Headers: `X-VISOR-API-Key: {admin-token}` (The admin token is only accessible to VISOR Administrators)
+
+Return: VISOR API Response
+
+Codes:
+ + 401: Not Authorized
+ + 404: System not found
+ + 500: Something unexpected happened
+ + 200: OK - Information returned
+
+### Delete StellarObject
+
+Route: `/data-api/delete-stellar-object`
+
+Method: `POST`
+
+Body:
+```
+{
+    "stellarID": "{stellar-object-id}",
+    "systemID": "{system-id}"
+}
+```
+ * Note here: `{system-id}` must be the parent System of this stellar Object
+
+Headers: `X-VISOR-API-Key: {admin-token}` (The admin token is only accessible to VISOR Administrators)
+
+Return: VISOR API Response
+
+Codes:
+ + 401: Not Authorized
+ + 404: Stellar Object not found
+ + 500: Something unexpected happened
+ + 200: OK - Information returned
+
+### Delete planet Level object
+
+Route: `/data-api/delete-planet-object`
+
+Method: `POST`
+
+Body:
+```
+{
+    "planetID": "{planet-object-id}",
+    "stellarID": "{stellar-object-id}"
+}
+```
+ * Note here: `{stellar-object-id}` has to be the Parent Stellar Object
+
+Headers: `X-VISOR-API-Key: {admin-token}` (The admin token is only accessible to VISOR Administrators)
+
+Return: VISOR API Response
+
+Codes:
+ + 401: Not Authorized
+ + 404: Planet Level Object not found
+ + 500: Something unexpected happened
+ + 200: OK - Information returned
+
+
 ### Reports & Changes
 
 TBD
@@ -405,7 +605,8 @@ Here is how these Keys can access the different reports and how user Activity is
 | `updateVISOR` | `/visor/update` | `POST` | Yes | Yes | Yes |
 | `approveVISOR` | `/visor/approve` | `POST` | Yes | Yes | No |
 | `deleteVISOR` | `/visor/delete` | `POST` | Yes | Yes | No |
-
+| `listSystems` | `/data/get-systems` | `GET` | Yes | Yes | Yes |
+| `getSystem` | `/data/get-system` | `GET` | Yes | Yes | Yes |
 
 
 ## Development Plans
@@ -423,6 +624,7 @@ Here is how these Keys can access the different reports and how user Activity is
 | Implement user Management | Roles, Path Auth and tokens. Implement them all, in order to have a clean API. | Done | FPG Schiba |
 | Implement Org Authentication | Define and Implement a authentication for users with orgs | Open | FPG Schiba |
 | Add user Functionality to Overlay | Implement Usermanagement and User authentication to VISOR Overlay | In Progress | FPG Schiba |
+| Implement Static data | Implement data fetching and modifying through the API | Done | FPG Schiba |
 | Plan Reports | Define and plan search quarries for VISOR Reports | In Progress | FPG Schiba |
 | Implement Reports | Implement the planned quarries and Paths and test it with the Overlay | Open | FPG Schiba |
 | Changes | Define all paths to changes & reports in order to get a overview of what happens in VISOR | Open | FPG Schiba |

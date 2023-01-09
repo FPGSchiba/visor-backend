@@ -1,0 +1,20 @@
+[
+    {
+        "name": "{system-name}",
+        "id": "{system-id}",
+        "stellarObjects": [
+            {
+                "name": "{object-name}",
+                "type": "planet|jumpPoint|asteroidBelt",
+                "id": "{object-id}",
+                "planetLevelObjects": [
+                    {
+                        "name": "{object-name}",
+                        "id": "{object-id}",
+                        "type": "moon|asteroidBelt"
+                    }
+                ]
+            }
+        ]
+    }
+]

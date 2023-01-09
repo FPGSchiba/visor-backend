@@ -1,0 +1,83 @@
+{
+    "name": "Pyro",
+    "stellarObjects": [
+        {
+            "name": "Pyro - Nyx",
+            "type": "jumpPoint"
+        },
+        {
+            "name": "Pyro - Stanton",
+            "type": "jumpPoint"
+        },
+        {
+            "name": "Pyro - Hadrian",
+            "type": "jumpPoint"
+        },
+        {
+            "name": "Pyro - Oso",
+            "type": "jumpPoint"
+        },
+        {
+            "name": "Pyro - Castra",
+            "type": "jumpPoint"
+        },
+        {
+            "name": "Pyro - Terra",
+            "type": "jumpPoint"
+        },
+        {
+            "name": "Pyro - Cano",
+            "type": "jumpPoint"
+        },
+        {
+            "name": "Pyro VI",
+            "type": "planet"
+        },
+        {
+            "name": "Pyro V",
+            "type": "planet",
+            "planetLevelObjects": [
+                {
+                    "name": "Ignis",
+                    "type": "moon"
+                },
+                {
+                    "name": "Vatra",
+                    "type": "moon"
+                },
+                {
+                    "name": "Adir",
+                    "type": "moon"
+                },
+                {
+                    "name": "Fairo",
+                    "type": "moon"
+                },
+                {
+                    "name": "Fuego",
+                    "type": "moon"
+                },
+                {
+                    "name": "Vuur",
+                    "type": "moon"
+                }
+            ]
+        },
+        {
+            "name": "Pyro IV",
+            "type": "planet"
+        },
+        {
+            "name": "Pyro III",
+            "type": "planet"
+        },
+        {
+            "name": "Pyro II",
+            "type": "planet"
+        },
+        {
+            "name": "Pyro I",
+            "type": "planet"
+        }
+    ]
+}

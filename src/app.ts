@@ -11,6 +11,8 @@ import { orgAuthentication } from './middleware/visor-auth';
 import usersRouter from './router/users.router';
 import visorRouter from './router/visor.router';
 import usersController from './controller/users.controller';
+import dataRouter from './router/data.router';
+import orgDataRouter from './router/org-data.router';
 
 app.use(expressWinston.logger(loggerOptions));
 
@@ -38,9 +40,13 @@ app.use((req, res, next) => {
 
 app.use('/api', adminAuthentication, managementRouter);
 
+app.use('/data-api', adminAuthentication, dataRouter);
+
 app.use('/users', orgAuthentication, usersRouter);
 
 app.use('/visor', orgAuthentication, visorRouter);
+
+app.use('/data', orgAuthentication, orgDataRouter)
 
 app.post('/activate-org', managementController.activateOrgReq);
 

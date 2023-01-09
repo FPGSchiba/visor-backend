@@ -9,3 +9,5 @@ export const TABLE_EXTENSION_CHANGES = '-changes-table';
 export const TABLE_EXTENSION_REPORTS = '-reports-table';
 export const PERMISSIONS_TABLE_NAME = 'static-permissions';
 export const SYSTEMS_TABLE_NAME = 'static-solar-systems';
+export const STELLAR_OBJECTS_TABLE_NAME = 'static-stellar-objects';
+export const PLANET_LEVEL_OBJECTS_TABLE_NAME = 'static-planet-level-objects';
