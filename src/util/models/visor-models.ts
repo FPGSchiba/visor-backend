@@ -8,7 +8,7 @@ export function getReportsTableModelWithName(tableName: string) {
                 AttributeType: "S"
             },
             {
-                AttributeName: "name",
+                AttributeName: "reportName",
                 AttributeType: "S" //https://dynobase.dev/dynamodb-data-types/
             }
         ],
@@ -18,7 +18,7 @@ export function getReportsTableModelWithName(tableName: string) {
                 KeyType: "HASH"
             },
             {
-                AttributeName: "name",
+                AttributeName: "reportName",
                 KeyType: "RANGE"
             }
         ],

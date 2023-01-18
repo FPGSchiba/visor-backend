@@ -116,7 +116,7 @@ export interface IVISORLocationDetails {
 
 export interface IVISORReportMeta {
     rsiHandle: string;
-    visorCode: string;
+    visorCode: number;
     visorCodeJustification?: string;
     scVersion: string;
     date: Date;
@@ -127,21 +127,70 @@ export interface IVISORReportMeta {
 
 export interface IVISORLocation {
     system: string;
-    object: string;
+    stellarObject: string;
+    planetLevelObject?: string;
     poiType: string;
     jurisdiction: string;
 }
 
 export interface IVISORReport {
     id: string;
-    name: string;
+    reportName: string;
     approved: boolean;
-    location: IVISORLocation;
+    visorLocation: IVISORLocation;
     reportMeta: IVISORReportMeta;
     locationDetails: IVISORLocationDetails;
     navigation: IVISORNavigation;
     fuelConsumptions?: IVISORFuelConsumption[];
     virs?: IVISORVirs;
-    screenShots: IVISORScreenshot[];
+    screenShots?: IVISORScreenshot[];
     keywords?: string[];
+}
+
+export interface IVISORInput {
+    reportName: string;
+    visorLocation: IVISORLocation;
+    reportMeta: IVISORReportMeta;
+    locationDetails: IVISORLocationDetails;
+    navigation: IVISORNavigation;
+    fuelConsumptions?: IVISORFuelConsumption[];
+    virs?: IVISORVirs;
+    screenShots?: IVISORScreenshot[];
+    keywords?: string[];
+}
+
+export interface IVISORSmall {
+    reportName: string;
+    id: string;
+    location: IVISORLocation;
+    approved: boolean;
+    reportMeta: IVISORReportMeta;
+    keywords?: string[];
+}
+
+export interface ILocationFilter {
+    system?: string;
+    stellarObject?: string;
+    planetLevelObject?: string;
+    poiType?: string;
+    jurisdiction?: string;
+}
+
+export interface IMetaFilter {
+    followupTrailblazers?: string;
+    followupDiscovery?: string;
+    visorCode?: string;
+    scVersion?: string;
+    rsiHandle?: string;   
+}
+
+export interface ISearchFilter {
+    name?: string;
+    location?: ILocationFilter;
+    meta?: IMetaFilter;
+    approved?: string;
+    keyword?: string;
+    length?: number;
+    from?: number;
+    to?: number;
 }

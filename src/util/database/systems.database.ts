@@ -2,7 +2,7 @@ import { PLANET_LEVEL_OBJECTS_TABLE_NAME, STELLAR_OBJECTS_TABLE_NAME, SYSTEMS_TA
 import { ICompleteStellarObject, ICompleteSystem, IPlanetLevelObject, IPlanetLevelObjectInput, IStellarObject, IStellarObjectInput, ISystem, ISystemInput, ISystemSmall } from "../formats/systems.format";
 import { LOG } from "../logger";
 import { deleteItem, getItemFromTable, putItem, scanTable, updateItem } from "./database";
-import {v4 as uuidv4, validate} from 'uuid';
+import {v4 as uuidv4} from 'uuid';
 import { DynamoDB } from "aws-sdk";
 
 export async function createCompleteSystem(system: ISystemInput, callback: (success: boolean) => void) {

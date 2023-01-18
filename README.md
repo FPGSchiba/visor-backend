@@ -2,7 +2,123 @@
 ## VISOR Format
 ```
 {
-    "name": "Test"
+    "reportName": "somename",
+    "visorLocation": {
+        "system": "some-system",
+        "stellarObject": "some-planet",
+        "planetLevelObject": "some-moon", // Optional
+        "poiType": "some-poi-type",
+        "jurisdiction": "UEE"
+    },
+    "reportMeta": {
+        "rsiHandle": "FPG Schiba",
+        "visorCode": 5,
+        "visorCodeJustification": "something", //Optional
+        "scVersion": "3.17.4",
+        "date": "some-date", // Format: YYYY-DD-MM HH:MM:SS
+        "followupTrailblazers": false,
+        "followupDiscovery": false,
+        "followupJustification": "something" //Optional
+    },
+    "locationDetails": {
+        "classification": "something",
+        "surroundings": "something",
+        "trade": "", //optional
+        "services": "", //optional
+        "hostiles": "", //optional
+        "defenses": "", //optional
+        "occupants": "", //optional
+        "lethalForce": "", //optional
+        "remainingOccupants": "", //optional
+        "zones": {
+            "noFly": false,
+            "armistice": false,
+            "other": "" //optional
+        }
+    },
+    "navigation": {
+        "om1": 12.12,
+        "om2": 123.12,
+        "om3": 123.12,
+        "om4": 123.12,
+        "om5": 123.65,
+        "om6": 13.123,
+        "straightLineOms": [ // Optional
+            {
+                "om": "om1|om2|om3|om4|om5|om6",
+                "distance": 123.123
+            }
+        ],
+        "refuelingGroundPoi": { // Optional
+            "name": "somename",
+            "distance": 123.12,
+            "bearing": 123.12 //optional
+        },
+        "spaceStation": { // Optional
+            "name": "somename",
+            "distance": 1278.12
+        }
+    },
+    "fuelConsumptions": [ // Optional
+        {
+            "ship": "someship",
+            "drive": "somedrive",
+            "fuelConsumption": 1234.123,
+            "pointA": {
+                "name": "somename",
+                "distance": 1234.12
+            },
+            "pointB": {
+                "name": "somename",
+                "distance": 123.12
+            }
+        }
+    ],
+    "virs": { // Optional
+        "temperatureMeasures": [ // optional
+            12.23,
+            72.5
+        ],
+        "breathable": false,
+        "externalPressure": 1234.1, // optional
+        "composition": "somecomp", // optional
+        "pads": { // optional
+            "ground": 12,
+            "ship": 12
+        },
+        "surfaceElevation": 1236, //optional
+        "radiation": 1234, //optional
+        "gravity": 123.123, //optional
+        "consoles": {
+            "trading": false,
+            "mining": false,
+            "finePayment": false,
+            "security": false,
+            "weaponSales": {
+                "personal": false,
+                "ship": false
+            },
+            "shipComponents": false,
+            "shipRental": false,
+            "landing": false,
+            "habitation": false,
+            "fuel": {
+                "hydrogen": false,
+                "quantanium": false
+            },
+            "repair": false,
+            "rearm": false
+        }
+    },
+    "screenShots": [ //optional
+        {
+            "description": "something",
+            "picture": "location / base64"
+        }
+    ],
+    "keywords": [ // Optional
+        "someWord"
+    ]
 }
 ```
 ## API
@@ -239,9 +355,38 @@ Codes:
 
 ### Get VISORs
 
-Route: `/visor/list`
+Route: `/visor/list?name={report-name}?location={location-filter}meta={meta-filter}&approved={boolean}&keyword={keyword}&length={length}&from={from}&to={to}`
+* Note: All params here are optional (Those within the location filter as well), please be gentle with filters atm.
+* Note 2: `from` and `to` need to be together and `length` can be separate, but if `from` and `to` are given, there needs to be a `length`
 
-TODO: Define search parameters
+location-filter:
+```
+{
+    "system": "{system-name}",
+    "stellarObject": "{stellar-object-name}",
+    "planetLevelObject": "{planet-level-object-name}",
+    "poiType": "{poi-type}",
+    "jurisdiction": "{jurisdiction}"
+}
+```
+* names: The corresponding Name for a object ot a system. Does not have to be in the Database.
+* `poiType`: Free Text of a poiType
+* `jurisdiction`: Free Text of a jurisdiction
+
+meta-filter: 
+```
+{
+    "followupTrailblazers": "{boolean}", // Important: Do " symbols here.
+    "followupDiscovery": "{boolean}", // Important: Do " symbols here.
+    "visorCode": "{visor-code}",
+    "scVersion": "{sc-version}",
+    "rsiHandle": "{rsi-handle}"
+}
+```
+* Followups are booleans, whether the VISORs should have followups checked or unchecked.
+* `visorCode` is a number, which specifies, which VISOR Code the VISOR uses
+* `scVersion` is a string which filters VISORs with this Version
+* `rsiHandle` is a string which filters the RSI Handle of a Person, that created or updated this report.
 
 Method: `GET`
 
@@ -249,7 +394,37 @@ Headers:
 * `X-VISOR-User-Key: {VISOR-user-key}`
 * `X-VISOR-Org-Key: {VISOR-org-key}` 
 
-Return: VISOR API Response, with data: TBD (small VISOR list)
+Return: VISOR API Response, with data:
+```
+{
+    "count": {number},
+    "reports": [
+        "id": "{visor-id}",
+        "reportName": "{visor-name}",
+        "approved": {boolean},
+        "visorLocation": {
+            "system": "{system-name}",
+            "stellarObject": "{stellar-object-name}",
+            "planetLevelObject": "{planet-level-object-name}", // Optional
+            "poiType": "{poi-type}",
+            "jurisdiction": "{jurisdiction}"
+        },
+        "reportMeta": {
+            "rsiHandle": "{rsi-handle}",
+            "visorCode": "{visor-code}",
+            "visorCodeJustification": "{justification}", // Optional
+            "scVersion": "{version}",
+            "date": "{date}",
+            "followupTrailblazers": {boolean},
+            "followupDiscovery": {boolean},
+            "followupJustification": "{justification}" // Optional
+        },
+        keywords: [ // Optional
+            "someWord"
+        ]
+    ]
+}
+```
 
 Codes:
  + 401: Not Authorized
@@ -258,7 +433,7 @@ Codes:
 
 ### Get specific VISOR
 
-Route: `/visor/get?name={visor-name}`
+Route: `/visor/get?id={visor-id}`
 
 TODO: Define return field parameters
 
@@ -298,11 +473,46 @@ Codes:
 
 ### Update VISOR
 
-Route: `/visor/update?name={visor-name}`
+Route: `/visor/update?id={visor-id}`
+* Note Overwrites the VISOR with the body provided
 
 Method: `POST`
 
 body: Look at a default VISOR report
+
+Headers: 
+* `X-VISOR-User-Key: {VISOR-user-key}`
+* `X-VISOR-Org-Key: {VISOR-org-key}` 
+
+Return: VISOR API Response, with data: `{"id": "{created-visor-id}"}`
+
+Codes:
+ + 400: Parameter missing
+ + 401: Not Authorized
+ + 404: VISOR not found
+ + 500: Something unexpected happened
+ + 200: OK - Information returned
+
+
+### Upload VISOR Image
+
+Route: `/visor/image?id={visor-id}`
+
+Method: `POST`
+
+Body:
+```
+{
+  "image": {
+    "name": "{image-name}",
+    "data": "{image-data}",
+    "size": {image-size},
+    "encoding": "{image-encoding}",
+    "mimetype": "{image-type}",
+    "md5": "{image-hash}",
+  }
+}
+```
 
 Headers: 
 * `X-VISOR-User-Key: {VISOR-user-key}`
@@ -317,6 +527,23 @@ Codes:
  + 500: Something unexpected happened
  + 200: OK - Information returned
 
+### Get array of Image Links for VISOR
+Route: `/visor/images?id={visor-id}`
+
+Method: `GET`
+
+Headers: 
+* `X-VISOR-User-Key: {VISOR-user-key}`
+* `X-VISOR-Org-Key: {VISOR-org-key}` 
+
+Return: VISOR API Response with data: `[ {"imageName": "{image-name}", "imageLink": "{image-link}"}, ... ]`
+
+Codes:
+ + 400: Parameter missing
+ + 401: Not Authorized
+ + 404: VISOR not found
+ + 500: Something unexpected happened
+ + 200: OK - Information returned
 
 ### Approve VISOR
 
@@ -605,6 +832,8 @@ Here is how these Keys can access the different reports and how user Activity is
 | `updateVISOR` | `/visor/update` | `POST` | Yes | Yes | Yes |
 | `approveVISOR` | `/visor/approve` | `POST` | Yes | Yes | No |
 | `deleteVISOR` | `/visor/delete` | `POST` | Yes | Yes | No |
+| `uploadImage` | `/visor/image`| `POST` | Yes | Yes | Yes |
+| `getImages` | `/visor/images` | `GET` | Yes | Yes | Yes |
 | `listSystems` | `/data/get-systems` | `GET` | Yes | Yes | Yes |
 | `getSystem` | `/data/get-system` | `GET` | Yes | Yes | Yes |
 
@@ -626,5 +855,6 @@ Here is how these Keys can access the different reports and how user Activity is
 | Add user Functionality to Overlay | Implement Usermanagement and User authentication to VISOR Overlay | In Progress | FPG Schiba |
 | Implement Static data | Implement data fetching and modifying through the API | Done | FPG Schiba |
 | Plan Reports | Define and plan search quarries for VISOR Reports | In Progress | FPG Schiba |
-| Implement Reports | Implement the planned quarries and Paths and test it with the Overlay | Open | FPG Schiba |
+| Implement Reports | Implement the planned quarries and Paths and test it with the Overlay | In Progress | FPG Schiba |
+| Implement Images | Implement uploading and saving for Images for Reports | Open | FPG Schiba |
 | Changes | Define all paths to changes & reports in order to get a overview of what happens in VISOR | Open | FPG Schiba |
