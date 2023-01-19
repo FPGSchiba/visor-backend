@@ -106,3 +106,5 @@ dist
 docker
 
 volume
+
+.idea
