@@ -553,8 +553,9 @@ Route: `/visor/approve`
 
 Method: `POST`
 
-body: `{ "name": "{visor-name}", "approverHandle": "{approver-handle}" }`
+body: `{ "name": "{visor-name}", "approverHandle": "{approver-handle}", "approveReason". "{some-reason}" }`
  * If no `approverHandle` is given, the user handle from the request auth is used.
+ * Note: `approveReason` is only needed for the changes functionality.
 
 Headers: 
 * `X-VISOR-User-Key: {VISOR-user-key}`
