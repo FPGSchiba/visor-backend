@@ -158,13 +158,9 @@ export function getOrgNameFromKey(orgKey: string, callback: (success: boolean, o
         }
     }
     filterTable(query, (success, data) => {
-        if(success) {
-            if (data?.Items?.length == 1) {
-                const result = data?.Items[0];
-                callback(true, result.orgName.S);
-            } else {
-                callback(false);
-            }
+        if(success && data && data.Items && data.Items.length == 1) {
+            const result = data?.Items[0];
+            callback(true, result.orgName.S);
         } else {
             callback(false);
         }

@@ -149,6 +149,7 @@ export interface IVISORReport {
 
 export interface IVISORInput {
     reportName: string;
+    public: boolean;  // TODO: Implement this correctly with all VISOR APIs
     visorLocation: IVISORLocation;
     reportMeta: IVISORReportMeta;
     locationDetails: IVISORLocationDetails;
@@ -162,11 +163,13 @@ export interface IVISORInput {
 export interface IVISORSmall {
     reportName: string;
     id: string;
+    public: boolean;  // TODO: Implement this correctly with all VISOR APIs
     location: IVISORLocation;
     approved: boolean;
     reportMeta: IVISORReportMeta;
     keywords?: string[];
 }
+
 
 export interface ILocationFilter {
     system?: string;
@@ -188,6 +191,7 @@ export interface ISearchFilter {
     name?: string;
     location?: ILocationFilter;
     meta?: IMetaFilter;
+    public?: string; // TODO: Implement this correctly with all VISOR APIs
     approved?: string;
     keyword?: string;
     length?: number;
