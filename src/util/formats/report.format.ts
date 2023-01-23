@@ -1,8 +1,3 @@
-export interface IVISORScreenshot {
-    description: string;
-    picture: string;
-}
-
 export interface IVISORVirsConsolesFuel {
     hydrogen: boolean;
     quantanium: boolean;
@@ -143,31 +138,45 @@ export interface IVISORReport {
     navigation: IVISORNavigation;
     fuelConsumptions?: IVISORFuelConsumption[];
     virs?: IVISORVirs;
-    screenShots?: IVISORScreenshot[];
     keywords?: string[];
 }
 
-export interface IVISORInput {
+export interface IVISOROutput {
+    id: string;
     reportName: string;
-    public: boolean;  // TODO: Implement this correctly with all VISOR APIs
+    approved: boolean;
+    published: boolean;
     visorLocation: IVISORLocation;
     reportMeta: IVISORReportMeta;
     locationDetails: IVISORLocationDetails;
     navigation: IVISORNavigation;
     fuelConsumptions?: IVISORFuelConsumption[];
     virs?: IVISORVirs;
-    screenShots?: IVISORScreenshot[];
+    keywords?: string[];
+}
+
+export interface IVISORInput {
+    reportName: string;
+    visorLocation: IVISORLocation;
+    reportMeta: IVISORReportMeta;
+    locationDetails: IVISORLocationDetails;
+    navigation: IVISORNavigation;
+    fuelConsumptions?: IVISORFuelConsumption[];
+    virs?: IVISORVirs;
     keywords?: string[];
 }
 
 export interface IVISORSmall {
     reportName: string;
     id: string;
-    public: boolean;  // TODO: Implement this correctly with all VISOR APIs
     location: IVISORLocation;
     approved: boolean;
     reportMeta: IVISORReportMeta;
     keywords?: string[];
+}
+
+export interface IVISORSmallOutput extends IVISORSmall {
+    published: boolean;
 }
 
 
@@ -191,7 +200,7 @@ export interface ISearchFilter {
     name?: string;
     location?: ILocationFilter;
     meta?: IMetaFilter;
-    public?: string; // TODO: Implement this correctly with all VISOR APIs
+    published?: string;
     approved?: string;
     keyword?: string;
     length?: number;

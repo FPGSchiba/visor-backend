@@ -1,5 +1,7 @@
 import express from 'express';
 import expressWinston from 'express-winston';
+import bodyParser from 'body-parser';
+import fileUpload from 'express-fileupload';
 import { loggerOptions } from './util';
 const app = express();
 import pj from '../package.json';
@@ -20,8 +22,11 @@ runMigration();
 
 
 /** Parse the body of the request */
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(fileUpload({
+    createParentPath: true
+}))
 
 /* Rules */ 
 app.use((req, res, next) => {

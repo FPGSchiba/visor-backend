@@ -3,6 +3,8 @@
 ```
 {
     "reportName": "somename",
+    "approved": false,
+    "published": "false",
     "visorLocation": {
         "system": "some-system",
         "stellarObject": "some-planet",
@@ -355,7 +357,7 @@ Codes:
 
 ### Get VISORs
 
-Route: `/visor/list?name={report-name}?location={location-filter}meta={meta-filter}&approved={boolean}&keyword={keyword}&length={length}&from={from}&to={to}`
+Route: `/visor/list?name={report-name}&location={location-filter}&meta={meta-filter}&approved={boolean}&published={boolean}&keyword={keyword}&length={length}&from={from}&to={to}`
 * Note: All params here are optional (Those within the location filter as well), please be gentle with filters atm.
 * Note 2: `from` and `to` need to be together and `length` can be separate, but if `from` and `to` are given, there needs to be a `length`
 
@@ -401,6 +403,7 @@ Return: VISOR API Response, with data:
     "reports": [
         "id": "{visor-id}",
         "reportName": "{visor-name}",
+        "published": {boolean}
         "approved": {boolean},
         "visorLocation": {
             "system": "{system-name}",
@@ -493,26 +496,13 @@ Codes:
  + 500: Something unexpected happened
  + 200: OK - Information returned
 
-
 ### Upload VISOR Image
 
 Route: `/visor/image?id={visor-id}`
 
 Method: `POST`
 
-Body:
-```
-{
-  "image": {
-    "name": "{image-name}",
-    "data": "{image-data}",
-    "size": {image-size},
-    "encoding": "{image-encoding}",
-    "mimetype": "{image-type}",
-    "md5": "{image-hash}",
-  }
-}
-```
+Body: form with a image file.
 
 Headers: 
 * `X-VISOR-User-Key: {VISOR-user-key}`
@@ -553,7 +543,7 @@ Route: `/visor/approve`
 
 Method: `POST`
 
-body: `{ "name": "{visor-name}", "approverHandle": "{approver-handle}", "approveReason". "{some-reason}" }`
+body: `{ "id": "{visor-id}", "approverHandle": "{approver-handle}", "approveReason". "{some-reason}" }`
  * If no `approverHandle` is given, the user handle from the request auth is used.
  * Note: `approveReason` is only needed for the changes functionality.
 
@@ -576,7 +566,7 @@ Route: `/visor/delete`
 
 Method: `POST`
 
-body: `{ "name": "{visor-name}", "deletionReason": "{reason}" }`
+body: `{ "id": "{visor-id}", "deletionReason": "{reason}" }`
  * The reason here is used to safe the reason to changes in order to have clarity why reports can't be found
 
 Headers: 
@@ -796,9 +786,6 @@ Codes:
 
 TBD
 
-## Database
-
-TBD: Define Database structures
 
 ## Authentication
 
@@ -852,10 +839,10 @@ Here is how these Keys can access the different reports and how user Activity is
 | Implement Org Activation | Define and Implement how Orgs will be created with their activation token. | Done | FPG Schiba |
 | Plan User Management for Orgs | Define the User Management within Orgs, with it the Authentication. | Done | FPG Schiba |
 | Implement user Management | Roles, Path Auth and tokens. Implement them all, in order to have a clean API. | Done | FPG Schiba |
-| Implement Org Authentication | Define and Implement a authentication for users with orgs | Open | FPG Schiba |
-| Add user Functionality to Overlay | Implement Usermanagement and User authentication to VISOR Overlay | In Progress | FPG Schiba |
+| Implement Org Authentication | Define and Implement a authentication for users with orgs | Done | FPG Schiba |
+| Add user Functionality to Overlay | Implement Usermanagement and User authentication to VISOR Overlay | Done | FPG Schiba |
 | Implement Static data | Implement data fetching and modifying through the API | Done | FPG Schiba |
-| Plan Reports | Define and plan search quarries for VISOR Reports | In Progress | FPG Schiba |
+| Plan Reports | Define and plan search quarries for VISOR Reports | Done | FPG Schiba |
 | Implement Reports | Implement the planned quarries and Paths and test it with the Overlay | In Progress | FPG Schiba |
-| Implement Images | Implement uploading and saving for Images for Reports | Open | FPG Schiba |
+| Implement Images | Implement uploading and saving for Images for Reports | In Progress | FPG Schiba |
 | Changes | Define all paths to changes & reports in order to get a overview of what happens in VISOR | Open | FPG Schiba |
