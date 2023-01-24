@@ -1,8 +1,6 @@
 import AWS from 'aws-sdk';
-import { Query } from 'aws-sdk/clients/cloudsearchdomain';
 import { CreateTableInput, GetItemInput, Key, GetItemOutput, ScanInput, ScanOutput, PutItemInput, DeleteItemInput, QueryOutput, QueryInput, UpdateItemInput, AttributeUpdates, DeleteTableInput } from 'aws-sdk/clients/dynamodb';
 import * as dotenv from 'dotenv';
-import { Logform } from 'winston';
 import { LOG } from '../logger';
 dotenv.config();
 

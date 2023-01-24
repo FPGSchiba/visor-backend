@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { approveReport, createReport, deleteReport, filterReports, getReportFromID, updateReport } from '../util/database/report.database';
 import { ISearchFilter, IVISORInput } from '../util/formats/report.format';
 import { LOG } from '../util';
+import { uploadImageForId } from '../util/image-manager';
 
 function checkVisorFormat(visor: any): boolean {
     const reportName = visor.reportName && typeof(visor.reportName) == 'string';
@@ -180,11 +181,30 @@ function deleteVISOR(req: Request, res: Response) {
 
 function uploadImage(req: Request, res: Response) {
     const { id } = req.query;
-    console.log(req.files);
-    return res.status(400).json({
-        message: 'Not Implemented yet, please try again some other time.',
-        code: 'NotImplemented'
-    })
+    const { image } = req.files ? req.files : { image: undefined };
+    if (id && typeof(id) == 'string' && image && !Array.isArray(image)) {
+        uploadImageForId(image, id, res.locals.orgName, (success, link) => {
+            if (success && link) {
+                return res.status(200).json({
+                    message: 'Successfully uploaded a image to the report.',
+                    code: 'Success',
+                    data: {
+                        link
+                    }
+                });
+            } else {
+                return res.status(500).json({
+                    message: 'Failed to upload this image to teh given report ID. Please check your information and try again.',
+                    code: 'InternalError'
+                });
+            }
+        })
+    } else {
+        return res.status(400).json({
+            message: 'Please provide a body, with a image in it. VISOR only supports single Image upload.',
+            code: 'IncompleteBody'
+        })
+    }
 }
 
 function getImages(req: Request, res: Response) {
