@@ -5,7 +5,7 @@ env:
    REPO: '993842362912.dkr.ecr.eu-central-1.amazonaws.com'
 
 phases:
-  information:
+  pre_build:
     commands: # TODO: Read version from package.json
       - docker --version
       - apt-get install jq
