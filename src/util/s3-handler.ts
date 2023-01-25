@@ -6,13 +6,13 @@ dotenv.config();
 
 const Bucket = process.env.AWS_S3_BUCKET || '';
 
-const s3Client = new AWS.S3(
+const s3Client = process.env.AWS_S3_ENDPOINT && process.env.AWS_S3_ENDPOINT && process.env.AWS_S3_ENDPOINT ? new AWS.S3(
     {
         endpoint: process.env.AWS_S3_ENDPOINT || '',
         accessKeyId: process.env.AWS_ACCESS_KEY_ID || '',
         secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || '',
     }
-);
+) : new AWS.S3();
 
 export function createBucket(bucketName: string, callback: (success: boolean) => void ) {
     s3Client.listBuckets((err, data) => {

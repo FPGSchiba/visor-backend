@@ -1,21 +1,21 @@
 import AWS from 'aws-sdk';
-import { CreateTableInput, GetItemInput, Key, GetItemOutput, ScanInput, ScanOutput, PutItemInput, DeleteItemInput, QueryOutput, QueryInput, UpdateItemInput, AttributeUpdates, DeleteTableInput } from 'aws-sdk/clients/dynamodb';
+import { CreateTableInput, GetItemInput, Key, GetItemOutput, ScanInput, ScanOutput, PutItemInput, DeleteItemInput, QueryOutput, QueryInput, UpdateItemInput, AttributeUpdates, DeleteTableInput, DescribeTableInput } from 'aws-sdk/clients/dynamodb';
 import * as dotenv from 'dotenv';
 import { LOG } from '../logger';
 dotenv.config();
 
-AWS.config.update({region: process.env.AWS_REGION || 'eu-central-1'});
+AWS.config.update({region: process.env.AWS_REGION || 'eu-central-1'});
 
-const ddb = new AWS.DynamoDB(
+const ddb = process.env.AWS_DDB_ENDPOINT && process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY ? new AWS.DynamoDB(
     {
         apiVersion: '2012-08-10',
         endpoint: process.env.AWS_DDB_ENDPOINT || '',
         accessKeyId: process.env.AWS_ACCESS_KEY_ID || '',
         secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || '',
     }
-);
+) : new AWS.DynamoDB({apiVersion: '2012-08-10'});
 
-export async function createTable(table: CreateTableInput, callbacK?: (success: boolean) => void) {
+export function createTable(table: CreateTableInput, callback: (success: boolean) => void) {
     const params = {
         ...table,
         ProvisionedThroughput: {
@@ -27,23 +27,17 @@ export async function createTable(table: CreateTableInput, callbacK?: (success: 
         }
     } as CreateTableInput
     try  {
-        await ddb.createTable(params, (err, _) => {
+        ddb.createTable(params, (err, _) => {
             if (!err) {
-                if (typeof callbacK !== "undefined") { 
-                    callbacK(true);
-                }
+                waitForCreationToFinish(table.TableName, callback);
             } else {
                 LOG.error(err.message);
-                if (typeof callbacK !== "undefined") { 
-                    callbacK(false);
-                }
+                callback(false);
             }
         });
     } catch {
         LOG.error(`Could not create Table: ${table.TableName}`);
-        if (typeof callbacK !== "undefined") { 
-            callbacK(false);
-        }
+        callback(false);
     }
 }
 
@@ -163,6 +157,17 @@ export function updateItem(tableName: string, key: Key, updates: AttributeUpdate
         if (err) {
             LOG.error(err.message);
             callback(false);
+        } else {
+            callback(true);
+        }
+    })
+}
+
+export function waitForCreationToFinish(tableName: string, callback: (success: boolean) => void) {
+    ddb.describeTable({TableName: tableName}, (_, data) => {
+        if (data.Table?.TableStatus == 'CREATING') {
+            waitForCreationToFinish(tableName, callback);
+            return;
         } else {
             callback(true);
         }

@@ -14,7 +14,7 @@ export const loggerOptions = {
     timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
     errors({ stack: true }),
     align(),
-    printf(({ level, message, timestamp, stack }) => `[${level}] ${timestamp}: ${message} \n ${stack || ''}`),
+    printf(({ level, message, timestamp, stack }) => `[${level}] ${timestamp}: ${message} ${stack || ''}`),
   ),
   transports: [new transports.Console({ level })],
 }
