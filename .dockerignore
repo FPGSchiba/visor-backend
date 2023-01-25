@@ -1,0 +1,13 @@
+node_modules
+dist
+docker
+images
+examples
+scripts
+.env
+.gitignore
+.git
+docker-compose.yaml
+LICENCE
+README.md
+temp-systems-layout.json

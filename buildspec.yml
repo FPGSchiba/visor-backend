@@ -1,0 +1,22 @@
+version: 0.2
+
+env:
+  variables:
+   REPO: '993842362912.dkr.ecr.eu-central-1.amazonaws.com'
+
+phases:
+  information:
+    commands: # TODO: Read version from package.json
+      - docker --version
+      - apt-get install jq
+      - export VERSION=cat package.json | jq '.version'
+  build:
+    commands: # TODO: Build Image and tag it right
+      - docker build . -t visor-backend
+      - docker tag visor-backend:latest $REPO/visor-backend:latest
+      - docker tag visor-backend:$VERSION $REPO/visor-backend:$VERSION
+  post_build:
+    commands: # TODO: Upload docker image to repo
+      - aws ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin 993842362912.dkr.ecr.eu-central-1.amazonaws.com
+      - docker push $REPO/visor-backend:latest
+      - docker push $REPO/visor-backend:$VERSION
