@@ -14,7 +14,7 @@ phases:
     commands: # TODO: Build Image and tag it right
       - docker build . -t visor-backend
       - docker tag visor-backend:latest $REPO/visor-backend:latest
-      - docker tag visor-backend:$VERSION $REPO/visor-backend:$VERSION
+      - docker tag visor-backend $REPO/visor-backend:$VERSION
   post_build:
     commands: # TODO: Upload docker image to repo
       - aws ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin 993842362912.dkr.ecr.eu-central-1.amazonaws.com
