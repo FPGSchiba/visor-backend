@@ -8,7 +8,7 @@ phases:
   pre_build:
     commands: # TODO: Read version from package.json
       - docker --version
-      - apt-get install jq
+      - yum install -y jq
       - export VERSION=cat package.json | jq '.version'
   build:
     commands: # TODO: Build Image and tag it right
