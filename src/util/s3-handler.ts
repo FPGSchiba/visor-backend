@@ -1,5 +1,6 @@
 import AWS from 'aws-sdk';
 import * as dotenv from 'dotenv';
+import { finished } from 'stream';
 import { LOG } from './logger';
 
 dotenv.config();
@@ -19,25 +20,23 @@ export function createBucket(bucketName: string, callback: (success: boolean) =>
         if (!err && data && data.Buckets) {
             const buckets = data.Buckets.filter((value) => value.Name == bucketName);
             if (buckets.length == 1) {
-                LOG.warn(`Bucket: ${bucketName} does already exist.`);
                 callback(true);
             } else {
+                LOG.warn(`Bucket: ${bucketName} does not exist. Attempting to create Bucket now...`);
                 const params: AWS.S3.CreateBucketRequest = {
                     Bucket: bucketName,
                 }
-                s3Client.createBucket(params, (err, data) => {
+                s3Client.createBucket(params, (err, _) => {
                     if (err) {
-                        console.log(err);
                         LOG.error(err.message);
                         callback(false);
                     } else {
-                        console.log(data);
                         callback(true);
                     }
                 })
             }
         } else {
-            LOG.error(err);
+            LOG.error(err.message);
             callback(false);
         }
     })
@@ -47,7 +46,7 @@ export function uploadObject(objectKey: string, data: Buffer, size: number, mime
     createBucket(Bucket, (success) => {
         if (success) {
             const uploadParams: AWS.S3.PutObjectRequest = {
-                Bucket,
+                Bucket: Bucket,
                 Key: objectKey,
                 Body: data,
                 ContentLength: size,
@@ -56,7 +55,6 @@ export function uploadObject(objectKey: string, data: Buffer, size: number, mime
             }
             s3Client.upload(uploadParams, (err) => {
                 if (err) {
-                    console.log(err);
                     LOG.error(err.message);
                     callback(false);
                 } else {
@@ -70,7 +68,7 @@ export function uploadObject(objectKey: string, data: Buffer, size: number, mime
 }
 
 export function getSignedUrlForObject(objectKey: string, callback: (success: boolean, link?: string) => void) {
-    s3Client.getSignedUrl('getObject', {Key: objectKey}, (err, url) => {
+    s3Client.getSignedUrl('getObject', {Key: objectKey, Bucket, Expires: 3600}, (err, url) => {
         if (err) {
             LOG.error(err.message);
             callback(false);
@@ -78,4 +76,68 @@ export function getSignedUrlForObject(objectKey: string, callback: (success: boo
             callback(true, url);
         }
     })
+}
+
+export function listObjectsInOrg(orgName: string, callback: (success: boolean, data?: string[]) => void) {
+    const params: AWS.S3.ListObjectsRequest = {
+        Bucket,
+        Prefix: `${orgName}/`
+    }
+    s3Client.listObjects(params, (err, data) => {
+        if (!err && data.Contents && data.Contents.length > 0) {
+            const keys = data.Contents.map((value) => {
+                return value.Key || '';
+            });
+            callback(true, keys);
+        } else {
+            LOG.error(err.message);
+            callback(false);
+        }
+    })
+}
+
+export function hasObjectId(objectKey: string, id: string, callback: (success: boolean, result?: boolean) => void) {
+    const params: AWS.S3.GetObjectTaggingRequest = {
+        Bucket,
+        Key: objectKey,
+    }
+    s3Client.getObjectTagging(params, (err, data) => {
+        if (!err) {
+            const hasID = data.TagSet.filter((value) => value.Value == id).length >= 1;
+            callback(true, hasID);
+        } else {
+            callback(false);
+        }
+    })
+}
+
+export async function getSignedUrlForObjects(objectKeys: string[], id: string): Promise<string[]> {
+    let Successful = true;
+    const signedURLs = await Promise.all(objectKeys.map(async (Key) => {
+        let signedURL = '';
+        let finished = false;
+        hasObjectId(Key, id, (success, result) => {
+            if (success && result) {
+                getSignedUrlForObject(Key, (success, link) => {
+                    if (success && link) {
+                        signedURL = link;
+                        finished = true;
+                    } else {
+                        Successful = false;
+                        finished = true;
+                    }
+                })
+            } else {
+                Successful = false;
+                finished = true;
+            }
+        });
+
+        while (!finished) {
+            await new Promise(resolve => setTimeout(resolve, 100));
+        }
+
+        return signedURL;
+    }));
+    return signedURLs.filter((value) => value != '');
 }

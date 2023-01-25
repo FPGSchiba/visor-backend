@@ -526,7 +526,7 @@ Headers:
 * `X-VISOR-User-Key: {VISOR-user-key}`
 * `X-VISOR-Org-Key: {VISOR-org-key}` 
 
-Return: VISOR API Response with data: `[ {"imageName": "{image-name}", "imageLink": "{image-link}"}, ... ]`
+Return: VISOR API Response with data: `[ "{image-link}", "{image-link}", ... ]`
 
 Codes:
  + 400: Parameter missing
@@ -843,6 +843,16 @@ Here is how these Keys can access the different reports and how user Activity is
 | Add user Functionality to Overlay | Implement Usermanagement and User authentication to VISOR Overlay | Done | FPG Schiba |
 | Implement Static data | Implement data fetching and modifying through the API | Done | FPG Schiba |
 | Plan Reports | Define and plan search quarries for VISOR Reports | Done | FPG Schiba |
-| Implement Reports | Implement the planned quarries and Paths and test it with the Overlay | In Progress | FPG Schiba |
-| Implement Images | Implement uploading and saving for Images for Reports | In Progress | FPG Schiba |
+| Implement Reports | Implement the planned quarries and Paths  | Done | FPG Schiba |
+| Implement Images | Implement uploading and saving for Images for Reports | Done | FPG Schiba |
+| AWS Pipeline | Create a CI/CD Pipeline within AWS to auto deploy and build new VISOR Versions | Done | FPG Schiba |
+| AWS Environment | Create a Environment to run the visor-backend on containing: (DynamoDB, Secrets Manager, S3, Load Balancer, ECR and ECS) | Done | FPG Schiba |
+| Overlay | Implement all the features that are now only in the backend into the frontend, until everything works. | In Progress | FPG Schiba |
+| Overlay Updates | Implement a CI/CD Pipeline on the visor-overlay to automatically release new updates onto a server which is responsible for updating all clients. | Open | FPG Schiba |
+| Overlay stress test | Once all overlay features (With updates) are working, release a alpha version of the overlay and stress test | Open | FPG Schiba |
+| Overlay Rollout | Prepare for rollout (autoscaling, alerts & monitoring) rollout clients to all people that want one | Open | FPG Schiba |
+| Overlay tool time | Make a tool time with schiba and give a nice overview and tutorial regarding VISOR | Open | FPG Schiba |
+| vngd.net Website | Talk with Esdin about a possible integration into the vngd.net website | Open | FPG Schiba & Esdin |
+| vngd.net Domain | Make a CNAME record for visor if its ok with Esdin and Space | Open | FPG Schiba |
 | Changes | Define all paths to changes & reports in order to get a overview of what happens in VISOR | Open | FPG Schiba |
+| VerseGuide | Implement external data source for public POIs and Systems & stellarObjects. | Open and Blocked | FPG Schiba |

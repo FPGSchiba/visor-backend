@@ -2,7 +2,7 @@ import { UploadedFile } from 'express-fileupload';
 import { PUBLIC_SUBFOLDER_NAME } from './config';
 import { getReportFromID } from './database/report.database';
 import {v4 as uuidv4} from 'uuid';
-import { getSignedUrlForObject, uploadObject } from './s3-handler';
+import { getSignedUrlForObject, getSignedUrlForObjects, listObjectsInOrg, uploadObject } from './s3-handler';
 
 // Upload image
 // -> Tag report id
@@ -47,3 +47,20 @@ export function uploadImageForId(image: UploadedFile, id: string, orgName: strin
 }
 
 // Get Image List for id
+export function getAllImagesForId(orgName: string, id: string, callback: (success: boolean, links?: string[]) => void) {
+    getReportFromID(orgName, id, (success, report) => {
+        if (success && report) {
+            const prefix = report.published ? 'public' : orgName;
+            listObjectsInOrg(prefix, async (success, data) => {
+                if (success && data) {
+                    const links = await getSignedUrlForObjects(data, id);
+                    callback(true, links);
+                } else {
+                    callback(false)
+                }
+            })
+        } else {
+            callback(false);
+        }
+    })
+}

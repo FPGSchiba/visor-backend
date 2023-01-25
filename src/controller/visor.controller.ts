@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { approveReport, createReport, deleteReport, filterReports, getReportFromID, updateReport } from '../util/database/report.database';
 import { ISearchFilter, IVISORInput } from '../util/formats/report.format';
 import { LOG } from '../util';
-import { uploadImageForId } from '../util/image-manager';
+import { getAllImagesForId, uploadImageForId } from '../util/image-manager';
 
 function checkVisorFormat(visor: any): boolean {
     const reportName = visor.reportName && typeof(visor.reportName) == 'string';
@@ -208,10 +208,30 @@ function uploadImage(req: Request, res: Response) {
 }
 
 function getImages(req: Request, res: Response) {
-    return res.status(400).json({
-        message: 'Not Implemented yet, please try again some other time.',
-        code: 'NotImplemented'
-    })
+    const { id } = req.query;
+    if (id && typeof(id) == 'string') {
+        getAllImagesForId(res.locals.orgName, id, (success, links) => {
+            if (success && links) {
+                return res.status(200).json({
+                    message: 'Successfully uploaded a image to the report.',
+                    code: 'Success',
+                    data: {
+                        links
+                    }
+                });
+            } else {
+                return res.status(500).json({
+                    message: 'Failed to fetch images for this report.',
+                    code: 'InternalError'
+                });
+            }
+        })
+    } else {
+        return res.status(400).json({
+            message: 'Please check, that your request has a "id" parameter to select the report.',
+            code: 'IncompleteBody'
+        })
+    }
 }
 
 export default {
