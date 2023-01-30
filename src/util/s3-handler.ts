@@ -1,6 +1,5 @@
 import AWS from 'aws-sdk';
 import * as dotenv from 'dotenv';
-import { finished } from 'stream';
 import { LOG } from './logger';
 
 dotenv.config();

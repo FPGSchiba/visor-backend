@@ -202,29 +202,40 @@ const beginningSystems = [
     }
 ] as ISystem[]
 
-export function runMigration(callback: (success: boolean) => void) {
+export async function runMigration() {
+    let finished = false;
+    let success = false;
     createSystemsMigration((systemSuccess) => {
         if (systemSuccess) {
             createStellarObjectsMigration((stellarSuccess) => {
                 if (stellarSuccess) {
                     createPlanetLevelObjectsMigration((planetSuccess) => {
                         if (planetSuccess) {
-                            callback(true);
+                            success = true;
+                            finished = true;
                         } else {
                             LOG.error('Could not create Planet Level Objects!');
-                            callback(false);
+                            success = false;
+                            finished = true;
                         }
                     })
                 } else {
                     LOG.error('Could not create Stellar Objects!');
-                    callback(false);
+                    success = false;
+                    finished = true;
                 }
             })
         } else {
             LOG.error('Could not create Systems!');
-            callback(false);
+            success = false;
+            finished = true;
         }
     })
+
+    while (!finished) {
+        await new Promise(resolve => setTimeout(resolve, 100));
+    }
+    return success;
 }
 
 function createSystemsMigration(callback: (success: boolean) => void) {

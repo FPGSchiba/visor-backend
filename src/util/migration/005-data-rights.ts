@@ -28,8 +28,16 @@ const beginningPermissions = [
     }
 ] as IPermission[]
 
-export function runMigration(callback: (success: boolean) => void) {
+export async function runMigration() {
+    let finished = false;
+    let success = false;
     createPermissions(beginningPermissions, (permissionSuccess) => {
-        callback(permissionSuccess);
+        success = permissionSuccess;
+        finished = true;
     })
+    
+    while (!finished) {
+        await new Promise(resolve => setTimeout(resolve, 100));
+    }
+    return success;
 }

@@ -128,22 +128,32 @@ const beginningPermissions = [
     }
 ] as IPermission[]
 
-export function runMigration(callback: (success: boolean) => void) {
+export async function runMigration() {
+    let finished = false;
+    let success = false;
     getAllTables((tables) => {
         if (!(tables && tables.includes(PERMISSIONS_TABLE_NAME))) {
             const table = getPermissionsTableFromName(PERMISSIONS_TABLE_NAME);
             createTable(table, (tableSuccess) => {
                 if (tableSuccess) {
                     createPermissions(beginningPermissions, (permissionSuccess) => {
-                        callback(permissionSuccess);
+                        success = permissionSuccess;
+                        finished = true;
                     })
                 } else {
-                    callback(tableSuccess);
+                    success = true;
+                    finished = true;
                 }
             });
         } else {
             LOG.warn('Permissions Table does already exist. Skipping this Step.');
-            callback(true);
+            success = true;
+            finished = true;
         }
-    })
+    });
+
+    while (!finished) {
+        await new Promise(resolve => setTimeout(resolve, 100));
+    }
+    return success;
 }

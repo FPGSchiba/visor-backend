@@ -14,21 +14,21 @@ export function runMigration() {
             migrationFiles.map(async (file) => {
                 if (!didRunMigration(file, doneMigrations)) {
                     const module = await import(`${MIGRATION_DIRECTORY}${file}`);
-                    module.runMigration((success: boolean) => {
-                        if (success) {
-                            LOG.info(`Successful migration for: [${file}]`);
-                            const item = {
-                                id: {S: uuidv4()} ,
-                                fileName: {S: file},
-                                date: {S: Date()}
-                            }
-                            putItem(MIGRATION_TABLE_NAME, item, (err) => {
-                                if (err) {
-                                    LOG.error(err.message);
-                                }
-                            });
+                    const success = await module.runMigration();
+
+                    if (success) {
+                        LOG.info(`Successful migration for: [${file}]`);
+                        const item = {
+                            id: {S: uuidv4()} ,
+                            fileName: {S: file},
+                            date: {S: Date()}
                         }
-                    });
+                        putItem(MIGRATION_TABLE_NAME, item, (err) => {
+                            if (err) {
+                                LOG.error(err.message);
+                            }
+                        });
+                    }
                 }
             });
         });
