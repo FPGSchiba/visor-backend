@@ -6,14 +6,31 @@ dotenv.config();
 
 AWS.config.update({region: process.env.AWS_REGION || 'eu-central-1'});
 
-const ddb = process.env.AWS_DDB_ENDPOINT && process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY ? new AWS.DynamoDB(
-    {
-        apiVersion: '2012-08-10',
-        endpoint: process.env.AWS_DDB_ENDPOINT || '',
-        accessKeyId: process.env.AWS_ACCESS_KEY_ID || '',
-        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || '',
-    }
-) : new AWS.DynamoDB({apiVersion: '2012-08-10'});
+function getDynamoDBConfig() {
+    if (process.env.AWS_DDB_ENDPOINT && process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY) {
+        return new AWS.DynamoDB(
+            {
+                apiVersion: '2012-08-10',
+                endpoint: process.env.AWS_DDB_ENDPOINT,
+                accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+                secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+            }
+        )
+    } else if (process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY) {
+        return new AWS.DynamoDB(
+            {
+                apiVersion: '2012-08-10',
+                accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+                secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+            }
+        ) 
+    } else {
+        return new AWS.DynamoDB({apiVersion: '2012-08-10'})
+    }  ;
+    
+}
+
+const ddb = getDynamoDBConfig();
 
 export function createTable(table: CreateTableInput, callback: (success: boolean) => void) {
     const params = {
