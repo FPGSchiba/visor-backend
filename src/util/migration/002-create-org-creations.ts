@@ -9,20 +9,20 @@ export async function runMigration() {
     getAllTables((tables) => {
         if (!(tables && tables.includes(ORG_CREATION_TABLE))) {
             const table = getOrgCreationModelWithName(ORG_CREATION_TABLE);
-            createTable(table, (success) => {
-                if (success) {
+            createTable(table, (tableSuccess) => {
+                if (tableSuccess) {
                     registerNewOrgCreation(DEFAULT_ORG_NAME, DEFAULT_ORG_REQUESTER, (successful) => {
                         success = successful;
                         finished = true;
                     });
                 } else {
-                    success = success;
+                    success = tableSuccess;
                     finished = true;
                 }
             });
         } else {
-            registerNewOrgCreation(DEFAULT_ORG_NAME, DEFAULT_ORG_REQUESTER, (success) => {
-                success = success;
+            registerNewOrgCreation(DEFAULT_ORG_NAME, DEFAULT_ORG_REQUESTER, (creationSuccess) => {
+                success = creationSuccess;
                 finished = true;
             });
         }

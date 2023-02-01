@@ -8,8 +8,8 @@ export async function runMigration(): Promise<boolean> {
     getAllTables(async (tables) => {
         if (!(tables && tables.includes(REPORT_TABLE_NAME))) {
             const table = getReportsTableModelWithName(REPORT_TABLE_NAME);
-            createTable(table, (success) => {
-                success = success;
+            createTable(table, (tableSuccess) => {
+                success = tableSuccess;
                 finished = true;
             });
         } else {
