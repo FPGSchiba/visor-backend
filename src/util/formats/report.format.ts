@@ -93,6 +93,7 @@ export interface IVISORNavigation {
 export interface IVISORLocationDetailsZones {
     noFly: boolean;
     armistice: boolean;
+    restricted: boolean;
     other?: string;
 }
 
