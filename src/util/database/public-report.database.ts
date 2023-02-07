@@ -15,7 +15,6 @@ export function createReport(visor: IVISORInput, callback: (success: boolean, id
         id,
     }
     const item = DynamoDB.Converter.marshall(report);
-    console.log(item);
     putItem(tableName, item, (err) => {
         if (err) {
             console.error(err.message); 

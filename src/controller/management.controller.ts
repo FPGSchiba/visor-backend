@@ -114,7 +114,6 @@ function deleteOrg(req: Request, res: Response) {
 
 function getOrgActivationToken(req: Request, res: Response) {
     const { name } = req.query;
-    console.log(name);
     if (name && typeof(name) == 'string') {
         fetchActivationToken(name, (success, token) => {
             if (success) {

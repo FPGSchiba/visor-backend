@@ -39,7 +39,6 @@ export function fetchActivationToken(orgName: string, callback: (success: boolea
     }
     getItemFromTable(ORG_CREATION_TABLE, key, (success, data) => {
         if (success) {
-            console.log(data);
             if (data?.Item) callback(true, data.Item.activationKey.S);
             else {
                 LOG.error(`OrgName: ${orgName} was not found in activation Table!`);
