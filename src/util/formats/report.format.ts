@@ -42,13 +42,13 @@ export interface IVISORVirs {
 
 export interface IVISORFuelConsumptionPoint {
     name: string;
-    distance: number;
 }
 
 export interface IVISORFuelConsumption {
     ship: string;
     drive: string;
-    fuelConsumption: string;
+    fuelConsumption: number;
+    distance: number;
     pointA: IVISORFuelConsumptionPoint;
     pointB: IVISORFuelConsumptionPoint;
 }

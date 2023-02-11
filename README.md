@@ -112,12 +112,6 @@
             "rearm": false
         }
     },
-    "screenShots": [ //optional
-        {
-            "description": "something",
-            "picture": "location / base64"
-        }
-    ],
     "keywords": [ // Optional
         "someWord"
     ]
