@@ -65,12 +65,22 @@ export function filterReports(orgName: string, filter: ISearchFilter, callback: 
 
             if (data.Count > 1) {
                 const indexes = getIndexes(data.Count, filter.length, filter.from, filter.to);
+                const ordered = items.sort(function(a, b) {
+                    var textA = a.reportName.toUpperCase();
+                    var textB = b.reportName.toUpperCase();
+                    return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+                }).slice(indexes[0], indexes[1])
 
-                callback(true, items.slice(indexes[0], indexes[1]), data.Count);
+                callback(true, ordered, data.Count);
             } else {
-                callback(true, items, data.Count);
+                const ordered = items.sort(function(a, b) {
+                    var textA = a.reportName.toUpperCase();
+                    var textB = b.reportName.toUpperCase();
+                    return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+                });
+                callback(true, ordered, data.Count);
             }
-        } else if (success && data?.Count && data.Count == 0) {
+        } else if (success) {
             callback(true, undefined, 0);
         } else {
             callback(false);

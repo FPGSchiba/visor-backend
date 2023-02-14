@@ -119,7 +119,7 @@ function updateVISOR(req: Request, res: Response) {
                 });
             } else {
                 return res.status(500).json({
-                    message: 'Could not update the VISOR Report, please check your Information and try again.',
+                    message: 'It could be, that this report is approved and approved Reports cannot be changed or your Input is faulty. Either way: Could not update the VISOR Report, please check the report Information and try again.',
                     code: 'InternalError'
                 });
             }
@@ -233,6 +233,10 @@ function getImages(req: Request, res: Response) {
         })
     }
 }
+
+// TODO: Upload Image: Add description
+// TODO: Delete Image from Report
+// TODO: Return Description, Link & Image Name
 
 export default {
     createVISOR,

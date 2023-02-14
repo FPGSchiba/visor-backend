@@ -33,7 +33,12 @@ function distinguishedFilter(published: boolean, orgName: string, filter: ISearc
                         published: true
                     } as IVISORSmallOutput
                 })
-                callback(true, reports, count);
+                const ordered = reports.sort(function(a, b) {
+                    var textA = a.reportName.toUpperCase();
+                    var textB = b.reportName.toUpperCase();
+                    return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+                });
+                callback(true, ordered, count);
             } else {
                 callback(false);
             }
@@ -47,7 +52,12 @@ function distinguishedFilter(published: boolean, orgName: string, filter: ISearc
                         published: false
                     } as IVISORSmallOutput
                 })
-                callback(true, reports, count);
+                const ordered = reports.sort(function(a, b) {
+                    var textA = a.reportName.toUpperCase();
+                    var textB = b.reportName.toUpperCase();
+                    return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+                });
+                callback(true, ordered, count);
             } else {
                 callback(false);
             }
@@ -95,7 +105,7 @@ function combinedFilter(filter: ISearchFilter, orgName: string, callback: (succe
                     } as IVISORSmallOutput
                 });
                 orgCount = count;
-            } else if (success && count) {
+            } else if (success && typeof(count) == 'number') {
                 orgCount = 0;
             } else {
                 callback(false);
@@ -106,8 +116,13 @@ function combinedFilter(filter: ISearchFilter, orgName: string, callback: (succe
             if (completeCount > 0) {
                 const reports = orgReports.concat(publicReports);
                 const indexes = getIndexes(completeCount, originalFilter.length, originalFilter.from, originalFilter.to);
+                const ordered = reports.sort(function(a, b) {
+                    var textA = a.reportName.toUpperCase();
+                    var textB = b.reportName.toUpperCase();
+                    return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+                }).slice(indexes[0], indexes[1]);
 
-                callback(true, reports.slice(indexes[0], indexes[1]), completeCount);
+                callback(true, ordered, completeCount);
                 return;
             } else {
                 callback(false);
@@ -234,7 +249,7 @@ export function buildQuery(tableName: string, filter: ISearchFilter): ScanInput 
         const attributeKey = `#keyword`;
         const valueKey = `:keyword`;
         ExpressionAttributeNames[`${attributeKey}`] = "keywords";
-        ExpressionAttributeValues[`${valueKey}`] = {"SS": [filter.keyword]};
+        ExpressionAttributeValues[`${valueKey}`] = {"S": filter.keyword};
         FilterExpression += " and contains (#keyword, :keyword)";
     }
 

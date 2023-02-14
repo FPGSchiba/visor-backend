@@ -103,6 +103,8 @@ export function listObjectsInOrg(orgName: string, callback: (success: boolean, d
                 return value.Key || '';
             });
             callback(true, keys);
+        } else if (!err) {
+            callback(true, []);
         } else {
             LOG.error(err.message);
             callback(false);
