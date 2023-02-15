@@ -502,7 +502,7 @@ Headers:
 * `X-VISOR-User-Key: {VISOR-user-key}`
 * `X-VISOR-Org-Key: {VISOR-org-key}` 
 
-Return: VISOR API Response
+Return: VISOR API Response with data: `{ "image": { "name": "{image-name}", "description": "{image-description}", "url": "{image-link}" } }`
 
 Codes:
  + 400: Parameter missing
@@ -520,7 +520,7 @@ Headers:
 * `X-VISOR-User-Key: {VISOR-user-key}`
 * `X-VISOR-Org-Key: {VISOR-org-key}` 
 
-Return: VISOR API Response with data: `[ "{image-link}", "{image-link}", ... ]`
+Return: VISOR API Response with data: `{ "images": [ {"url": "{image-link}" "description": "{image-description}"}, "name": "{image-name}" ] }`
 
 Codes:
  + 400: Parameter missing

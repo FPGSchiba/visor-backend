@@ -182,14 +182,15 @@ function deleteVISOR(req: Request, res: Response) {
 function uploadImage(req: Request, res: Response) {
     const { id } = req.query;
     const { image } = req.files ? req.files : { image: undefined };
-    if (id && typeof(id) == 'string' && image && !Array.isArray(image)) {
-        uploadImageForId(image, id, res.locals.orgName, (success, link) => {
-            if (success && link) {
+    const { description } = req.body;
+    if (id && typeof(id) == 'string' && description && typeof(description) == 'string' && image && !Array.isArray(image)) {
+        uploadImageForId(image, description, id, res.locals.orgName, (success, image) => {
+            if (success && image) {
                 return res.status(200).json({
                     message: 'Successfully uploaded a image to the report.',
                     code: 'Success',
                     data: {
-                        link
+                        image,
                     }
                 });
             } else {
@@ -210,13 +211,13 @@ function uploadImage(req: Request, res: Response) {
 function getImages(req: Request, res: Response) {
     const { id } = req.query;
     if (id && typeof(id) == 'string') {
-        getAllImagesForId(res.locals.orgName, id, (success, links) => {
-            if (success && links) {
+        getAllImagesForId(res.locals.orgName, id, (success, images) => {
+            if (success && images) {
                 return res.status(200).json({
                     message: 'Successfully uploaded a image to the report.',
                     code: 'Success',
                     data: {
-                        links
+                        images
                     }
                 });
             } else {
@@ -234,9 +235,7 @@ function getImages(req: Request, res: Response) {
     }
 }
 
-// TODO: Upload Image: Add description
 // TODO: Delete Image from Report
-// TODO: Return Description, Link & Image Name
 
 export default {
     createVISOR,

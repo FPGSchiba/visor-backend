@@ -1,5 +1,6 @@
 import AWS from 'aws-sdk';
 import * as dotenv from 'dotenv';
+import { IVISORImage } from './formats/report.format';
 import { LOG } from './logger';
 
 dotenv.config();
@@ -127,17 +128,41 @@ export function hasObjectId(objectKey: string, id: string, callback: (success: b
     })
 }
 
-export async function getSignedUrlForObjects(objectKeys: string[], id: string): Promise<string[]> {
+export function getDescriptionFromKey(objectKey: string, callback: (success: boolean, description?: string) => void) {
+    const params: AWS.S3.GetObjectTaggingRequest = {
+        Bucket,
+        Key: objectKey,
+    }
+    s3Client.getObjectTagging(params, (err, data) => {
+        if (!err) {
+            const descriptionTag = data.TagSet.filter((value) => value.Key == 'description')[0];
+            callback(true, descriptionTag.Value);
+        } else {
+            callback(false);
+        }
+    })
+}
+
+export async function getSignedUrlForObjects(objectKeys: string[], id: string): Promise<IVISORImage[]> {
     let Successful = true;
     const signedURLs = await Promise.all(objectKeys.map(async (Key) => {
         let signedURL = '';
+        let objectDescription = '';
         let finished = false;
         hasObjectId(Key, id, (success, result) => {
             if (success && result) {
                 getSignedUrlForObject(Key, (success, link) => {
                     if (success && link) {
                         signedURL = link;
-                        finished = true;
+                        getDescriptionFromKey(Key, (descriptionSuccess, description) => {
+                            if (descriptionSuccess && description) {
+                                objectDescription = description;
+                                finished = true;
+                            } else {
+                                Successful = false;
+                                finished = true;
+                            }
+                        })
                     } else {
                         Successful = false;
                         finished = true;
@@ -153,7 +178,7 @@ export async function getSignedUrlForObjects(objectKeys: string[], id: string): 
             await new Promise(resolve => setTimeout(resolve, 100));
         }
 
-        return signedURL;
+        return {url: signedURL, description: objectDescription, name: Key};
     }));
-    return signedURLs.filter((value) => value != '');
+    return signedURLs.filter((value) => value.url != '' && value.description != '' && value.name != '');
 }
