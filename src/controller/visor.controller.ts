@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { approveReport, createReport, deleteReport, filterReports, getReportFromID, updateReport } from '../util/database/report.database';
 import { ISearchFilter, IVISORInput } from '../util/formats/report.format';
 import { LOG } from '../util';
-import { getAllImagesForId, uploadImageForId } from '../util/image-manager';
+import { deleteImageFromKey, getAllImagesForId, updateDescriptionFromKey, uploadImageForId } from '../util/image-manager';
 
 function checkVisorFormat(visor: any): boolean {
     const reportName = visor.reportName && typeof(visor.reportName) == 'string';
@@ -235,7 +235,55 @@ function getImages(req: Request, res: Response) {
     }
 }
 
-// TODO: Delete Image from Report
+function deleteImage(req: Request, res: Response) {
+    const { name } = req.query;
+    if (name && typeof(name) == 'string') {
+        deleteImageFromKey(name, (success) => {
+            if (success) {
+                return res.status(200).json({
+                    message: 'Successfully deleted Image.',
+                    code: 'Success'
+                })
+            } else {
+                return res.status(500).json({
+                    message: 'Could not find Image or there was an error while deleting the Image.',
+                    code: 'InternalError'
+                })
+            }
+        })
+    } else {
+        return res.status(400).json({
+            message: 'Please check, that your request has a "name" body option to select the image.',
+            code: 'IncompleteBody'
+        })
+    }
+}
+
+// TODO: Function: Change description
+function updateImage(req: Request, res: Response) {
+    const { name } = req.query;
+    const { description } = req.body;
+    if (description && typeof(description) == 'string' && name && typeof(name) == 'string') {
+        updateDescriptionFromKey(name, description, (success) => {
+            if (success) {
+                return res.status(200).json({
+                    message: 'Successfully update Image description.',
+                    code: 'Success'
+                })
+            } else {
+                return res.status(500).json({
+                    message: 'Could not find Image or there was an error while updating the Image description.',
+                    code: 'InternalError'
+                })
+            }
+        })
+    } else {
+        return res.status(400).json({
+            message: 'Please check, that your request has a "name" body option to select the image.',
+            code: 'IncompleteBody'
+        })
+    }
+}
 
 export default {
     createVISOR,
@@ -246,4 +294,6 @@ export default {
     deleteVISOR,
     uploadImage,
     getImages,
+    deleteImage,
+    updateImage
 }

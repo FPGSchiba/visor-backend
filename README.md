@@ -496,7 +496,7 @@ Route: `/visor/image?id={visor-id}`
 
 Method: `POST`
 
-Body: form with a image file.
+Body: form with a image file and a description.
 
 Headers: 
 * `X-VISOR-User-Key: {VISOR-user-key}`
@@ -521,6 +521,45 @@ Headers:
 * `X-VISOR-Org-Key: {VISOR-org-key}` 
 
 Return: VISOR API Response with data: `{ "images": [ {"url": "{image-link}" "description": "{image-description}"}, "name": "{image-name}" ] }`
+
+Codes:
+ + 400: Parameter missing
+ + 401: Not Authorized
+ + 404: VISOR not found
+ + 500: Something unexpected happened
+ + 200: OK - Information returned
+
+### Update Image description
+Route: `/visor/image-desc?name={image-name}`
+
+Method: `POST`
+
+Body: `{ "description": {new-description}" }`
+
+Headers: 
+* `X-VISOR-User-Key: {VISOR-user-key}`
+* `X-VISOR-Org-Key: {VISOR-org-key}` 
+
+Return: VISOR API Response.
+
+Codes:
+ + 400: Parameter missing
+ + 401: Not Authorized
+ + 404: VISOR not found
+ + 500: Something unexpected happened
+ + 200: OK - Information returned
+
+
+### Delete Image
+Route: `/visor/image?name={image-name}`
+
+Method: `DELETE`
+
+Headers: 
+* `X-VISOR-User-Key: {VISOR-user-key}`
+* `X-VISOR-Org-Key: {VISOR-org-key}` 
+
+Return: VISOR API Response.
 
 Codes:
  + 400: Parameter missing
@@ -816,6 +855,8 @@ Here is how these Keys can access the different reports and how user Activity is
 | `deleteVISOR` | `/visor/delete` | `POST` | Yes | Yes | No |
 | `uploadImage` | `/visor/image`| `POST` | Yes | Yes | Yes |
 | `getImages` | `/visor/images` | `GET` | Yes | Yes | Yes |
+| `deleteImage` | `/visor/image`| `DELETE` | Yes | Yes | Yes |
+| `updateImage` | `/visor/image-desc` | `POST` | Yes | Yes | Yes |
 | `listSystems` | `/data/get-systems` | `GET` | Yes | Yes | Yes |
 | `getSystem` | `/data/get-system` | `GET` | Yes | Yes | Yes |
 

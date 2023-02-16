@@ -25,6 +25,30 @@ const beginningPermissions = [
             'Contributor',
             'Editor'
         ]
+    },
+    {
+        name: 'deleteImage',
+        access: {
+            path: '/visor/image',
+            method: 'DELETE'
+        },
+        roles: [
+            'Admin',
+            'Contributor',
+            'Editor'
+        ]
+    },
+    {
+        name: 'updateImage',
+        access: {
+            path: '/visor/image-desc',
+            method: 'POST'
+        },
+        roles: [
+            'Admin',
+            'Contributor',
+            'Editor'
+        ],
     }
 ] as IPermission[]
 

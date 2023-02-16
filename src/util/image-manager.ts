@@ -2,8 +2,9 @@ import { UploadedFile } from 'express-fileupload';
 import { PUBLIC_SUBFOLDER_NAME } from './config';
 import { getReportFromID } from './database/report.database';
 import {v4 as uuidv4} from 'uuid';
-import { getSignedUrlForObject, getSignedUrlForObjects, listObjectsInOrg, uploadObject } from './s3-handler';
+import { deleteAllObjects, deleteObject, getSignedUrlForObject, getSignedUrlForObjects, getTagsForObject, listObjectsInOrg, setTagsForObject, updateAllImageReportIds, uploadObject } from './s3-handler';
 import { IVISORImage } from './formats/report.format';
+import { Tag } from 'aws-sdk/clients/s3';
 
 // Upload image
 // -> Tag report id
@@ -65,9 +66,71 @@ export function getAllImagesForId(orgName: string, id: string, callback: (succes
                     const links = await getSignedUrlForObjects(data, id);
                     callback(true, links);
                 } else {
-                    callback(false)
+                    callback(true, [])
                 }
             })
+        } else {
+            callback(false);
+        }
+    })
+}
+
+// Delete Object
+export function deleteImageFromKey(key: string, callback: (success: boolean) => void) {
+    deleteObject(key, (success) => {
+        callback(success);
+    })
+}
+
+// Get Object Tags
+// Set Object Tags
+export function updateDescriptionFromKey(key: string, description: string, callback: (success: boolean) => void) {
+    getTagsForObject(key, (success, tags) => {
+        if (success && tags) {
+            const newTags = tags.map((value) => { 
+                if (value.Key == 'description') {
+                    const tag: Tag = {
+                        Key: value.Key,
+                        Value: description
+                    }
+                    return tag;
+                } else {
+                    return value;
+                }
+            });
+            setTagsForObject(key, newTags, (success) => {
+                callback(success);
+            })
+        }
+    })
+}
+
+// Get all objects with ID && Tags
+// Set all Objects new Tags 
+export function updateImagesReportId(orgName: string, oldId: string, newId: string, callback: (success: boolean) => void) {
+    getAllImagesForId(orgName, oldId, async (success, images) => {
+        console.log(images);
+        console.log(`NewId: ${newId}, OldId: ${oldId}`);
+        if (success && images && images.length > 0) {
+            const result = await updateAllImageReportIds(images, newId);
+            callback(result);
+        } else if (images && images.length == 0) {
+            callback(true);
+        } else {
+            callback(false);
+        }
+    })
+}
+
+// Get all objects with ID
+// Delete all images
+export function deleteImagesForId(orgName: string, id: string, callback: (success: boolean) => void) {
+    getAllImagesForId(orgName, id, async (success, images) => {
+        if (success && images && images.length > 0) {
+            const result = await deleteAllObjects(images);
+            callback(result);
+        } else if (images && images.length == 0) {
+            callback(true);
         } else {
             callback(false);
         }

@@ -1,5 +1,6 @@
 import { ScanInput } from "aws-sdk/clients/dynamodb";
 import { ISearchFilter, IVISORInput, IVISOROutput, IVISORSmallOutput } from "../formats/report.format";
+import { deleteImagesForId, updateImagesReportId } from "../image-manager";
 import * as orgDatabase from './org-reports.database';
 import * as publicReportsDatabase from './public-report.database';
 
@@ -176,12 +177,24 @@ export function deleteReport(orgName: string, id: string, callback: (successs: b
     getReportFromID(orgName, id, (success, data) => {
         if (success && data && !data.approved) { // TODO: Maybe change this
             if (data.published) {
-                publicReportsDatabase.deleteReport(id, data.reportName, (success) => {
-                    callback(success);
-                });
+                deleteImagesForId(orgName, id, (success) => {
+                    if (success) {
+                        publicReportsDatabase.deleteReport(id, data.reportName, (success) => {
+                            callback(success);
+                        });
+                    } else {
+                        callback(false);
+                    }
+                })
             } else {
-                orgDatabase.deleteReport(orgName, id, data.reportName, (success) => {
-                    callback(success);
+                deleteImagesForId(orgName, id, (success) => {
+                    if (success) {
+                        orgDatabase.deleteReport(orgName, id, data.reportName, (success) => {
+                            callback(success);
+                        })
+                    } else {
+                        callback(false)
+                    }
                 })
             }
         } else {
@@ -191,11 +204,13 @@ export function deleteReport(orgName: string, id: string, callback: (successs: b
 }
 
 export function updateReport(published: boolean, orgName: string, visor: IVISORInput, id: string, callback: (success: boolean, id?: string) => void) {
-    deleteReport(orgName, id, (success) => {
-        if (success) {
-            createReport(published, orgName, visor, (success, id) => {
-                if (success && id) {
-                    callback(true, id);
+    createReport(published, orgName, visor, (success, newId) => {
+        if (success && newId) {
+            updateImagesReportId(orgName, id, newId, (success) => {
+                if (success) {
+                    deleteReport(orgName, id, (success) => {
+                        callback(success, newId);
+                    })
                 } else {
                     callback(false);
                 }

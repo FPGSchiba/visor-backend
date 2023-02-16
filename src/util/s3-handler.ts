@@ -1,4 +1,5 @@
 import AWS from 'aws-sdk';
+import { Tag, TagSet } from 'aws-sdk/clients/s3';
 import * as dotenv from 'dotenv';
 import { IVISORImage } from './formats/report.format';
 import { LOG } from './logger';
@@ -181,4 +182,105 @@ export async function getSignedUrlForObjects(objectKeys: string[], id: string): 
         return {url: signedURL, description: objectDescription, name: Key};
     }));
     return signedURLs.filter((value) => value.url != '' && value.description != '' && value.name != '');
+}
+
+export function deleteObject(key: string, callback: (success: boolean) => void) {
+    const params: AWS.S3.DeleteObjectRequest = {
+        Key: key,
+        Bucket
+    }
+    s3Client.deleteObject(params, (err, data) => {
+        if (err) {
+            LOG.error(err.message);
+            console.log(data);
+            callback(false);
+        } else {
+            callback(true);
+        }
+    })
+}
+
+export function getTagsForObject(key: string, callback: (success: boolean, tags?: TagSet) => void) {
+    const params = {
+        Key: key,
+        Bucket
+    }
+    s3Client.getObjectTagging(params, (err, data) => {
+        if (err) {
+            LOG.error(err.message);
+            callback(false);
+        } else {
+            callback(true, data.TagSet);
+        }
+    })
+}
+
+export function setTagsForObject(key: string, tags: TagSet, callback: (success: boolean) => void) {
+    const params: AWS.S3.PutObjectTaggingRequest = {
+        Key: key,
+        Bucket,
+        Tagging: { TagSet: tags}
+    }
+    s3Client.putObjectTagging(params, (err, _) => {
+        if (err) {
+            LOG.error(err.message);
+            callback(false);
+        } else {
+            callback(true);
+        }
+    })
+}
+
+export async function deleteAllObjects(images: IVISORImage[]): Promise<boolean> {
+    let success = true;
+    let count = 0;
+    images.forEach((image) => {
+        deleteObject(image.name, (success) => {
+            if (!success) {
+                success = false
+            }
+            count++;
+        })
+    });
+
+    while (count < images.length) {
+        await new Promise(resolve => setTimeout(resolve, 100));
+    }
+
+    return success;
+}
+
+export async function updateAllImageReportIds(images: IVISORImage[], id: string): Promise<boolean> {
+    let success = true;
+    let count = 0;
+    
+    images.forEach((image) => {
+        getTagsForObject(image.name, (success, tags) => {
+            if (success && tags) {
+                const newTags = tags.map((value) => { 
+                    if (value.Key == 'id') {
+                        const tag: Tag = {
+                            Key: value.Key,
+                            Value: id
+                        }
+                        return tag;
+                    } else {
+                        return value;
+                    }
+                });
+                setTagsForObject(image.name, newTags, (success) => {
+                    if (!success) {
+                        success = false;
+                    }
+                    count++;
+                })
+            }
+        })
+    })
+
+    while (count < images.length) {
+        await new Promise(resolve => setTimeout(resolve, 100));
+    }
+
+    return success;
 }

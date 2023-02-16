@@ -12,5 +12,8 @@ router.post('/update', visorController.updateVISOR);
 router.post('/delete', visorController.deleteVISOR);
 router.post('/approve', visorController.approveVISOR);
 router.post('/image', visorController.uploadImage);
+router.post('/image-desc', visorController.updateImage);
+
+router.delete('/image', visorController.deleteImage);
 
 export default router;
