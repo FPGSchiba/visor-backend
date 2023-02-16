@@ -192,7 +192,6 @@ export function deleteObject(key: string, callback: (success: boolean) => void) 
     s3Client.deleteObject(params, (err, data) => {
         if (err) {
             LOG.error(err.message);
-            console.log(data);
             callback(false);
         } else {
             callback(true);

@@ -109,8 +109,6 @@ export function updateDescriptionFromKey(key: string, description: string, callb
 // Set all Objects new Tags 
 export function updateImagesReportId(orgName: string, oldId: string, newId: string, callback: (success: boolean) => void) {
     getAllImagesForId(orgName, oldId, async (success, images) => {
-        console.log(images);
-        console.log(`NewId: ${newId}, OldId: ${oldId}`);
         if (success && images && images.length > 0) {
             const result = await updateAllImageReportIds(images, newId);
             callback(result);
