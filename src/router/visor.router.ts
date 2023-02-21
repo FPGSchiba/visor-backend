@@ -13,6 +13,7 @@ router.post('/delete', visorController.deleteVISOR);
 router.post('/approve', visorController.approveVISOR);
 router.post('/image', visorController.uploadImage);
 router.post('/image-desc', visorController.updateImage);
+router.post('/om-similarity', visorController.OMSimilarity);
 
 router.delete('/image', visorController.deleteImage);
 

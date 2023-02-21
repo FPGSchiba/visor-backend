@@ -490,6 +490,43 @@ Codes:
  + 500: Something unexpected happened
  + 200: OK - Information returned
 
+### Get OM Similarity
+ * Note: I currently calculate with a Threshold of 15km. If a OM is in a radius of 15km the API will return the corresponding report ID.
+
+Route: `/visor/om-similarity`
+
+Method: `POST`
+
+body:
+```
+{
+    "oms": [
+        {number},
+        {number},
+        {number},
+        {number},
+        {number},
+        {number}
+    ],
+    "system": "{system-name}",
+    "stellarObject": "{stellarObject-name}",
+    "planetLevelObject": "{planetLevelObject-name}" // Optional 
+}
+```
+Headers: 
+* `X-VISOR-User-Key: {VISOR-user-key}`
+* `X-VISOR-Org-Key: {VISOR-org-key}` 
+
+Return: VISOR API Response, with data: `{"similarReports": [ "{similar-report-id}", ... ]` This is only if the API finds a similar report.
+
+Codes:
+ + 400: Parameter missing
+ + 401: Not Authorized
+ + 404: No similar OMs for this location
+ + 500: No reports for location found
+ + 200: OK - Information returned
+
+
 ### Upload VISOR Image
 
 Route: `/visor/image?id={visor-id}`
@@ -851,6 +888,7 @@ Here is how these Keys can access the different reports and how user Activity is
 | `createVISOR` | `/visor/create` | `POST` | Yes | Yes | Yes |
 | `getVISOR` | `/visor/get` | `GET` | Yes | Yes | Yes |
 | `updateVISOR` | `/visor/update` | `POST` | Yes | Yes | Yes |
+| `omSimilarity` | `/visor/om-similarity` | `POST` | Yes | Yes | Yes |
 | `approveVISOR` | `/visor/approve` | `POST` | Yes | Yes | No |
 | `deleteVISOR` | `/visor/delete` | `POST` | Yes | Yes | No |
 | `uploadImage` | `/visor/image`| `POST` | Yes | Yes | Yes |

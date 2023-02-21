@@ -1,10 +1,10 @@
 import { DynamoDB } from "aws-sdk";
 import { TABLE_EXTENSION_REPORTS } from "../config";
-import { ISearchFilter, IVISORInput, IVISOROutput, IVISORReport, IVISORSmall } from "../formats/report.format";
+import { ISearchFilter, IVISORInput, IVISOROutput, IVISORReport, IVISORReportNavigation, IVISORSmall } from "../formats/report.format";
 import {v4 as uuidv4} from 'uuid';
-import { deleteItem, filterTable, putItem, scanTable, updateItem } from "./database";
-import { AttributeUpdates, ScanInput } from "aws-sdk/clients/dynamodb";
-import { buildQuery, getIndexes } from "./report.database";
+import { deleteItem, filterTable, putItem, queryTable, scanTable, updateItem } from "./database";
+import { AttributeUpdates, QueryInput, ScanInput } from "aws-sdk/clients/dynamodb";
+import { buildNavigationQuery, buildQuery, getIndexes } from "./report.database";
 
 function getTableName(orgName: string): string {
     return `${orgName.toLowerCase()}${TABLE_EXTENSION_REPORTS}`;
@@ -109,4 +109,19 @@ export function approveReport(orgName: string, id: string, reportName: string, c
     updateItem(tableName, key, updates, (success) => {
         callback(success);
     });
+}
+
+export function getAllReportsNavigation(orgName: string, nav: { system: string, stellarObject: string, planetLevelObject?: string }, callback: (success: boolean, data?: IVISORReportNavigation[]) => void) {
+    const tableName = getTableName(orgName);
+    const params: QueryInput = buildNavigationQuery(tableName, nav);
+    filterTable(params, (success, data) => {
+        if (success && data && data.Items && data.Items.length > 0) {
+            const reports: IVISORReportNavigation[] = data.Items.map((value) => {
+                return DynamoDB.Converter.unmarshall(value) as IVISORReportNavigation;
+            })
+            callback(true, reports);
+        } else {
+            callback(false);
+        }
+    })
 }

@@ -12,3 +12,4 @@ export const SYSTEMS_TABLE_NAME = 'static-solar-systems';
 export const STELLAR_OBJECTS_TABLE_NAME = 'static-stellar-objects';
 export const PLANET_LEVEL_OBJECTS_TABLE_NAME = 'static-planet-level-objects';
 export const PUBLIC_SUBFOLDER_NAME = 'public';
+export const OM_SIMILARITY_THRESHOLD = 15;

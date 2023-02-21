@@ -164,6 +164,11 @@ export interface IVISORSmallOutput extends IVISORSmall {
     published: boolean;
 }
 
+export interface IVISORReportNavigation {
+    navigation: IVISORNavigation;
+    id: string;
+}
+
 
 export interface ILocationFilter {
     system?: string;

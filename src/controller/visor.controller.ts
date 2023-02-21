@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { approveReport, createReport, deleteReport, filterReports, getReportFromID, updateReport } from '../util/database/report.database';
+import { approveReport, createReport, deleteReport, filterReports, getReportFromID, getSimilarReports, updateReport } from '../util/database/report.database';
 import { ISearchFilter, IVISORInput } from '../util/formats/report.format';
 import { LOG } from '../util';
 import { deleteImageFromKey, getAllImagesForId, updateDescriptionFromKey, uploadImageForId } from '../util/image-manager';
@@ -285,6 +285,39 @@ function updateImage(req: Request, res: Response) {
     }
 }
 
+function OMSimilarity(req: Request, res: Response) {
+    const { oms, system, stellarObject, planetLevelObject } = req.body;
+    if (typeof(oms) == 'object' && oms.length == 6 && typeof(system) == 'string' && typeof(stellarObject) == 'string') {
+        const nav = { system, stellarObject, planetLevelObject };
+        getSimilarReports(res.locals.orgName, oms, nav, (success, foundReports, similarReports) => {
+            if (success) {
+                if (foundReports && similarReports) {
+                    return res.status(200).json({
+                        message: 'There are reports with similar OM Markers on the same Moon / Planet.',
+                        code: 'Warning',
+                        similarReports
+                    })
+                } else {
+                    return res.status(404).json({
+                        message: 'No reports found with similar OMs.',
+                        code: 'NotFound',
+                    })
+                }
+            } else {
+                return res.status(500).json({
+                    message: 'The VISOR API could not find any reports on the specified Moon / Planet or there was some sort of Error.',
+                    code: 'InternalError'
+                })
+            }
+        })
+    } else {
+        return res.status(400).json({
+            message: 'Please check, that your request has all oms, system and stellarObject (planetLevelObject: optional) in the body.',
+            code: 'IncompleteBody'
+        })
+    }
+}
+
 export default {
     createVISOR,
     listVISORs,
@@ -295,5 +328,6 @@ export default {
     uploadImage,
     getImages,
     deleteImage,
-    updateImage
+    updateImage,
+    OMSimilarity
 }

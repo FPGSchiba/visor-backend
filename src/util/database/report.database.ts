@@ -1,5 +1,6 @@
-import { ScanInput } from "aws-sdk/clients/dynamodb";
-import { ISearchFilter, IVISORInput, IVISOROutput, IVISORSmallOutput } from "../formats/report.format";
+import { QueryInput, ScanInput } from "aws-sdk/clients/dynamodb";
+import { OM_SIMILARITY_THRESHOLD } from "../config";
+import { ISearchFilter, IVISORInput, IVISOROutput, IVISORReportNavigation, IVISORSmallOutput } from "../formats/report.format";
 import { deleteImagesForId, updateImagesReportId } from "../image-manager";
 import * as orgDatabase from './org-reports.database';
 import * as publicReportsDatabase from './public-report.database';
@@ -239,6 +240,67 @@ export function approveReport(orgName: string, id: string, callback: (success: b
     })
 }
 
+export function getAllReportsNavigation(orgName: string, nav: { system: string, stellarObject: string, planetLevelObject?: string }, callback: (success: boolean, reports?: IVISORReportNavigation[]) => void) {
+    let publicReports: IVISORReportNavigation[] = [];
+    let orgReports: IVISORReportNavigation[] = [];
+    publicReportsDatabase.getAllReportsNavigation(nav, (success, data) => {
+        if (success && data) {
+            publicReports = data;
+        } else {
+            callback(false);
+            return;
+        }
+
+        orgDatabase.getAllReportsNavigation(orgName, nav, (success, data) => {
+            if (success && data) {
+                orgReports = data;
+            } else {
+                callback(false);
+                return;
+            }
+
+            const reports = orgReports.concat(publicReports);
+            callback(true, reports);
+        });
+    });
+}
+
+export function getSimilarReports(orgName: string, oms: number[], nav: { system: string, stellarObject: string, planetLevelObject?: string }, callback: (success: boolean, foundReports: boolean, reportIDs?: string[]) => void) {
+    getAllReportsNavigation(orgName, nav, (success, reports) => {
+        if (success && reports && reports.length > 0) {
+            const similarIDs: string[] = reports.map((report) => {
+                const reportOMs = [
+                    report.navigation.om1,
+                    report.navigation.om2,
+                    report.navigation.om3,
+                    report.navigation.om4,
+                    report.navigation.om5,
+                    report.navigation.om6
+                ]
+                let similarity = 0;
+                reportOMs.forEach((value, index) => {
+                    similarity +=  Math.abs(oms[index] - value) / 6;
+                })
+                console.log(`Similarity: ${similarity}\nOMs: ${oms}\nReportOMs: ${reportOMs}`);
+                if (similarity < OM_SIMILARITY_THRESHOLD) {
+                    return report.id;
+                } else {
+                    return '';
+                }
+            }).filter((value) => value !== '');
+            if (similarIDs.length > 0) {
+                callback(true, true, similarIDs);
+            } else {
+                callback(true, false);
+            }
+        } else if (success && reports) {
+            callback(true, false);
+        } else {
+            callback(false, false);
+        }
+    })
+}
+
 export function buildQuery(tableName: string, filter: ISearchFilter): ScanInput {
     let FilterExpression = "";
     let ExpressionAttributeValues: any = {};
@@ -403,4 +465,50 @@ export function getIndexes(count: number, length?: number, from?: number, to?: n
     }
 
     return [startIndex, endIndex];
+}
+
+export function buildNavigationQuery(tableName: string, nav: { system: string, stellarObject: string, planetLevelObject?: string }): QueryInput {
+    let FilterExpression = "";
+    let ExpressionAttributeValues: any = {};
+    let ExpressionAttributeNames: any = {};
+    const locationKey = `#location`;
+    ExpressionAttributeNames[`${locationKey}`] = "visorLocation";
+    if (nav.system) {
+        const name = 'system';
+        const attributeKey = `#${name}`;
+        const valueKey = `:${name}`;
+        ExpressionAttributeNames[`${attributeKey}`] = "system";
+        ExpressionAttributeValues[`${valueKey}`] = {"S": nav.system};
+        FilterExpression += ` and contains (${locationKey}.${attributeKey}, ${valueKey})`;
+    }
+
+    if (nav.stellarObject) {
+        const name = 'stellarObject';
+        const attributeKey = `#${name}`;
+        const valueKey = `:${name}`;
+        ExpressionAttributeNames[`${attributeKey}`] = "stellarObject";
+        ExpressionAttributeValues[`${valueKey}`] = {"S": nav.stellarObject};
+        FilterExpression += ` and contains (${locationKey}.${attributeKey}, ${valueKey})`;
+    }
+
+    if (nav.planetLevelObject) {
+        const name = 'planetLevelObject';
+        const attributeKey = `#${name}`;
+        const valueKey = `:${name}`;
+        ExpressionAttributeNames[`${attributeKey}`] = "planetLevelObject";
+        ExpressionAttributeValues[`${valueKey}`] = {"S": nav.planetLevelObject};
+        FilterExpression += ` and contains (${locationKey}.${attributeKey}, ${valueKey})`;
+    }
+
+    const regex = /^\sand\s/;
+    FilterExpression = FilterExpression.replace(regex, '');
+
+    return {
+            "TableName": tableName,
+            "ConsistentRead": false,
+            "FilterExpression": FilterExpression,
+            "ExpressionAttributeValues": ExpressionAttributeValues,
+            "ExpressionAttributeNames": ExpressionAttributeNames,
+            "ProjectionExpression": "id, navigation"
+    } as ScanInput
 }
