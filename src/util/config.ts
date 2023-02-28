@@ -1,3 +1,6 @@
+import * as dotenv from 'dotenv';
+dotenv.config();
+
 export const REPORT_TABLE_NAME = 'public-shared-reports';
 export const ORG_CREATION_TABLE = 'private-org-creations'
 export const MIGRATION_TABLE_NAME = 'migrations';
@@ -12,4 +15,4 @@ export const SYSTEMS_TABLE_NAME = 'static-solar-systems';
 export const STELLAR_OBJECTS_TABLE_NAME = 'static-stellar-objects';
 export const PLANET_LEVEL_OBJECTS_TABLE_NAME = 'static-planet-level-objects';
 export const PUBLIC_SUBFOLDER_NAME = 'public';
-export const OM_SIMILARITY_THRESHOLD = 15;
+export const OM_SIMILARITY_THRESHOLD = typeof(process.env.OM_SIMILARITY_THRESHOLD) == 'undefined' ? 5 : +process.env.OM_SIMILARITY_THRESHOLD;

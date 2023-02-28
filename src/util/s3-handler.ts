@@ -137,7 +137,11 @@ export function getDescriptionFromKey(objectKey: string, callback: (success: boo
     s3Client.getObjectTagging(params, (err, data) => {
         if (!err) {
             const descriptionTag = data.TagSet.filter((value) => value.Key == 'description')[0];
-            callback(true, descriptionTag.Value);
+            if (descriptionTag) {
+                callback(true, descriptionTag.Value);
+            } else {
+                callback(false);
+            }
         } else {
             callback(false);
         }

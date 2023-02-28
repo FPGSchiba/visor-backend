@@ -108,7 +108,7 @@ function updateVISOR(req: Request, res: Response) {
         const published = visor.published === 'true';
         delete visor['published'];
 
-        updateReport(published, res.locals.orgName, visor as IVISORInput, id, (success, id) => {
+        updateReport(published, res.locals.orgName, visor as IVISORInput, id, (success, approved, id) => {
             if (success && id) {
                 return res.status(200).json({
                     message: 'Successfully updated the VISOR Report.',
@@ -117,9 +117,14 @@ function updateVISOR(req: Request, res: Response) {
                         id
                     }
                 });
+            } else if (approved) {
+                return res.status(404).json({
+                    message: 'This report is approved and approved Reports cannot be changed.',
+                    code: 'InternalError'
+                });
             } else {
                 return res.status(500).json({
-                    message: 'It could be, that this report is approved and approved Reports cannot be changed or your Input is faulty. Either way: Could not update the VISOR Report, please check the report Information and try again.',
+                    message: 'Something unexpected happened with the data you provided, check all values and try again.',
                     code: 'InternalError'
                 });
             }
@@ -259,7 +264,6 @@ function deleteImage(req: Request, res: Response) {
     }
 }
 
-// TODO: Function: Change description
 function updateImage(req: Request, res: Response) {
     const { name } = req.query;
     const { description } = req.body;

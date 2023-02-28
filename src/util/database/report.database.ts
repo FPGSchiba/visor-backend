@@ -204,20 +204,28 @@ export function deleteReport(orgName: string, id: string, callback: (successs: b
     })
 }
 
-export function updateReport(published: boolean, orgName: string, visor: IVISORInput, id: string, callback: (success: boolean, id?: string) => void) {
-    createReport(published, orgName, visor, (success, newId) => {
-        if (success && newId) {
-            updateImagesReportId(orgName, id, newId, (success) => {
-                if (success) {
-                    deleteReport(orgName, id, (success) => {
-                        callback(success, newId);
-                    })
-                } else {
-                    callback(false);
-                }
-            })
-        } else {
-            callback(false);
+export function updateReport(published: boolean, orgName: string, visor: IVISORInput, id: string, callback: (success: boolean, approved: boolean, id?: string) => void) {
+    getReportFromID(orgName, id, (success, data) => {
+        if (success && data) {
+            if (!data.approved) {
+                createReport(published, orgName, visor, (success, newId) => {
+                    if (success && newId) {
+                        updateImagesReportId(orgName, id, newId, (success) => {
+                            if (success) {
+                                deleteReport(orgName, id, (success) => {
+                                    callback(success, false, newId);
+                                })
+                            } else {
+                                callback(false, false);
+                            }
+                        })
+                    } else {
+                        callback(false, false);
+                    }
+                })
+            } else {
+                callback(false, true);
+            }
         }
     })
 }
@@ -281,7 +289,6 @@ export function getSimilarReports(orgName: string, oms: number[], nav: { system:
                 reportOMs.forEach((value, index) => {
                     similarity +=  Math.abs(oms[index] - value) / 6;
                 })
-                console.log(`Similarity: ${similarity}\nOMs: ${oms}\nReportOMs: ${reportOMs}`);
                 if (similarity < OM_SIMILARITY_THRESHOLD) {
                     return report.id;
                 } else {
